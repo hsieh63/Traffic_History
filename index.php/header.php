@@ -10,6 +10,7 @@
 	<link type="text/css" href="css/main.css" rel="stylesheet" />
 	<script type="text/javascript" src="scripts/jquery-1.9.0.min.js"></script>
 	<script type="text/javascript" src="scripts/menu.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.0.0.js"></script>
 	<title>Traffic Monitoring History</title>
 </head>
 <body>
