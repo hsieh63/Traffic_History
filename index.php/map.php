@@ -51,6 +51,17 @@ $(document).ready(function() {
         <br>
         <form id="mapImageData" action="" method="">
         Zipcode: <input type="number" name="zipcode">
+        <select name="time" required>
+            <option value="-1" selected="selected" disabled>Select a time period</option>
+            <option value="0">12am-3am</option>
+            <option value="1">3am-6am</option>
+            <option value="2">6am-9am</option>
+            <option value="3">9am-12pm</option>
+            <option value="4">12am-3pm</option>
+            <option value="5">3pm-6pm</option>
+            <option value="6">6pm-9pm</option>
+            <option value="7">9pm-12pm</option>
+        </select>
         <input type="submit" value="Submit">
         <br>
         <button id="zoomIn" type="button" style="display: none;">Zoom In</button>

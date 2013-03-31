@@ -1,6 +1,6 @@
 ﻿<?php
 
-function mapTrafficPoints() {
+function mapTrafficPoints($zipcode, $time) {
     //Create connection
     //mysqli_connect(host,username,password,dbname);
     $con = mysqli_connect("fdb4.biz.nf","1270538_traffic","Software2013","1270538_traffic");
