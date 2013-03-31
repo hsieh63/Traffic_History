@@ -23,18 +23,24 @@ $(document).ready(function() {
         return false;
     });
     $('#zoomIn').click(function () {
-        var imgSrc = $('mapImg').attr('src');
-        var zoomLvl = $('zoomLvl').attr('value');
+        var imgSrc = $('#mapImg').attr('src');
+        var zoomLvlSt = $('#zoomLvl').attr('value');
+        var zoomLvl = parseInt(zoomLvlSt);
         zoomLvl = zoomLvl + 1;
-        imgSrc = imgSrc.replace('zoom=[0-9]+','zoom=' + zoomLvl);
-        $('mapImg').attr('src') = imgSrc;
+        var newSrc = 'zoom=' + zoomLvl;
+        imgSrc = imgSrc.replace(/zoom=\d+/g,newSrc);
+        $('#mapImg').attr('src', imgSrc);
+        $('#zoomLvl').attr('value',zoomLvl);
     });
     $('#zoomOut').click(function () {
-        var imgSrc = $('mapImg').attr('src');
-        var zoom = $('zoomLvl').attr('value');
-        zoom = zoom - 1;
-        imgSrc = imgSrc.replace('zoom=[0-9]+','zoom=' + zoomLvl);
-        $('mapImg').attr('src') = imgSrc;
+        var imgSrc = $('#mapImg').attr('src');
+        var zoomLvlSt = $('#zoomLvl').attr('value');
+        var zoomLvl = parseInt(zoomLvlSt);
+        zoomLvl = zoomLvl - 1;
+        var newSrc = 'zoom=' + zoomLvl;
+        imgSrc = imgSrc.replace(/zoom=\d+/g,newSrc);
+        $('#mapImg').attr('src', imgSrc);
+        $('#zoomLvl').attr('value',zoomLvl);
     });
 });
 </script>
