@@ -1,6 +1,6 @@
 ﻿<?php
 
-function mapTrafficPoints($zipcode, $time) {
+function mapTrafficPoints($zipcode, $time, $weather) {
     //Create connection
     //mysqli_connect(host,username,password,dbname);
     $con = mysqli_connect("fdb4.biz.nf","1270538_traffic","Software2013","1270538_traffic");
@@ -11,6 +11,8 @@ function mapTrafficPoints($zipcode, $time) {
     }
     
     //query select * from table where condition
+    //format $time and zipcode(possibly if we dont use actualy zipcode
+    //Select * from Weather as a and Traffic_Incident as b where a.Zipcode = b.Zipcode and a.Date_Time = b.Date_Time and a.Date_Time like '%$time'
     //$result = $mysqli->query($query)
     //parse return
     //while($row = $result->fetch_row()) {

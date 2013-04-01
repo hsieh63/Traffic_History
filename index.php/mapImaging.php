@@ -15,7 +15,16 @@ if($_POST) {
     else {
         //error coding for empty time
     }
-    //mapTrafficPoints($zipcode, $timeSelected);
+    /*
+    if(isset($_POST['weather'])) {
+        $weatherSelected = $_POST['weather'];
+    }
+    else {
+        //error coding for empty time
+    }
+    */
+    //mapTrafficPoints($zipcode, $timeSelected, $weatherSelected);
+    
     //for google
     //key: AIzaSyAdM76kzhZ0uwCyHxZLogbt5Sc9PrF1RpM
     //linkg: http://maps.googleapis.com/maps/api/staticmap?center=New+York,NY&zoom=13&size=600x300&key=API_console_key

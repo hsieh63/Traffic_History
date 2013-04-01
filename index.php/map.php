@@ -62,6 +62,12 @@ $(document).ready(function() {
             <option value="6">6pm-9pm</option>
             <option value="7">9pm-12pm</option>
         </select>
+        <!--
+        <select name="weather" required>
+            <option value="-1" selected="selected" disabled>Select weather condition</option>
+            <option value=""></option>
+        </select>
+        -->
         <input type="submit" value="Submit">
         <br>
         <button id="zoomIn" type="button" style="display: none;">Zoom In</button>
