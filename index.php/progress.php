@@ -28,11 +28,11 @@
             <tr>
                 <td>03/08</td>
                 <td> Second report, Part 2</td>
-                <td>Not completed yet</td>
+                <td><a href="repTwoPtTwo.php" target="_blank">Second report part two PDF</a></td>
             <tr>
                 <td>03/15</td>
                 <td> Second Report, Full report</td>
-                <td>Not completed yet</td>
+                <td><a href="repTwo.php" target="_blank">Second report part two PDF</a></td>
             <tr>
                 <td>04/02</td>
                 <td> First demo</td>
