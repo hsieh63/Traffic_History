@@ -16,14 +16,12 @@ if($_POST) {
     else {
         //error coding for empty time
     }
-    /*
     if(isset($_POST['weather'])) {
         $weatherSelected = $_POST['weather'];
     }
     else {
         //error coding for empty time
     }
-    */
     $points = new array();
     $points = mapTrafficPoints($zipcode, $timeSelected, $weatherSelected);
     //$pointsToEncode = array();
