@@ -157,3 +157,8 @@ sub getWeather(){
 
 #main function
 getWeather();
+
+
+#Finished querying, close the connection
+$query_handle->finish();
+$dbh->disconnect();
