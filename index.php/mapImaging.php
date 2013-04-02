@@ -1,7 +1,7 @@
 ﻿<?php
 //need to build in error conditions for fields not selected or properly filled out
 //also need sql sanitation
-//include 'sqlQueries.php';
+include 'sqlQueries.php';
 //include 'polyEncode.php';
 if($_POST) {
     if(isset($_POST['zipcode'])) {
@@ -22,8 +22,8 @@ if($_POST) {
     else {
         //error coding for empty time
     }
-    $points = new array();
-    $points = mapTrafficPoints($zipcode, $timeSelected, $weatherSelected);
+    $pointsArray = array();
+    $pointsArray = mapTrafficPoints($zipcode, $timeSelected, $weatherSelected);
     //$pointsToEncode = array();
     //$pointsEncodeIndex = 0;
     //$pointsIndex = 0;
@@ -56,7 +56,7 @@ if($_POST) {
     $flag4 = 0;
     $flag5 = 0;
     
-    foreach ($points as $point) {
+    foreach ($pointsArray as $point) {
         if($point['color'] == 1) {
             $color1 .= '|' . $point['lngLat'];
             $flag1 = 1;
@@ -82,23 +82,35 @@ if($_POST) {
     //for google
     //key: AIzaSyAdM76kzhZ0uwCyHxZLogbt5Sc9PrF1RpM
     //link: http://maps.googleapis.com/maps/api/staticmap?center=New+York,NY&zoom=13&size=600x300&key=API_console_key
-    $googleImgSrc = "http://maps.googleapis.com/maps/api/staticmap?center=" . $zipcode . "&zoom=10&size=640x640&scale=2&key=AIzaSyAdM76kzhZ0uwCyHxZLogbt5Sc9PrF1RpM";
+    //$googleImgSrc = "http://maps.googleapis.com/maps/api/staticmap?center=" . $zipcode . "&zoom=10&size=640x640&scale=2&key=AIzaSyAdM76kzhZ0uwCyHxZLogbt5Sc9PrF1RpM";
+    $googleImgSrc = "http://maps.googleapis.com/maps/api/staticmap?size=640x640&scale=4&key=AIzaSyAdM76kzhZ0uwCyHxZLogbt5Sc9PrF1RpM";
+    $lastAnd = 0;
     if($flag1 == 1) {
         $googleImgSrc .= "&" . $color1 . "&";
+        $lastAnd = 1;
     }
     if($flag2 == 1) {
         $googleImgSrc .= "&" . $color2 . "&";
+        $lastAnd = 1;
     }
     if($flag3 == 1) {
         $googleImgSrc .= "&" . $color3 . "&";
+        $lastAnd = 1;
     }
     if($flag4 == 1) {
         $googleImgSrc .= "&" . $color4 . "&";
+        $lastAnd = 1;
     }
     if($flag5 == 1) {
         $googleImgSrc .= "&" . $color5 . "&";
+        $lastAnd = 1;
     }
-    $googleImgSrc .= "&sensor=false";
+    if($lastAnd == 1) {
+        $googleImgSrc .= "sensor=false";
+    }
+    else {
+        $googleImgSrc .= "&sensor=false";
+    }
     //can either echo or just construct it in html
     //$htmlImg = "<img id='mapImg' src= '" . $googleImgSrc . "' alt='Map Image of " . $zipcode . "'><label id='zoomLvl' value='10' style='display:none;'></label>";
     //echo $htmlImg;
@@ -109,3 +121,17 @@ if($_POST) {
 }
 ?>
 <img id='mapImg' src= '<?php echo $googleImgSrc ?>' alt='Map Image of <?php echo $zipcode ?>'><label id='zoomLvl' value='10' style='display:none;'></label>
+<!--
+<br>
+<label><?php print_r($pointsArray); ?> </label>
+<br>
+<label><?php echo $color1; ?> </label>
+<br>
+<label><?php echo $color2; ?> </label>
+<br>
+<label><?php echo $color3; ?> </label>
+<br>
+<label><?php echo $color4; ?> </label>
+<br>
+<label><?php echo $color5; ?> </label>
+-->
