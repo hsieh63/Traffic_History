@@ -11,8 +11,8 @@ $(document).ready(function() {
             type: "POST",
             data: $('#mapImageData').serialize(),
             success: function(response) {
-                $('#zoomIn').show();
-                $('#zoomOut').show();
+                //$('#zoomIn').show();
+                //$('#zoomOut').show();
                 $('#mapImageData').find('#formResult').html(response);
                 //alert('Success');
             },

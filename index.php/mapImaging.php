@@ -121,9 +121,11 @@ if($_POST) {
 }
 ?>
 <table style="text-align:center;">
-    <th>
-        Severity color correspondence (low to high)
-    </th>
+    <tr>
+        <td colspan=5>
+            Severity color correspondence (low to high)
+        </td>
+    </tr>
     <tr>
         <td>
             <label style="background-color:#00FF00;">Severity : 1 (lowest)</label>
