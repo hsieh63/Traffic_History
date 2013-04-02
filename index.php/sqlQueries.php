@@ -9,17 +9,24 @@ function mapTrafficPoints($zipcode, $time, $weather) {
     {
         echo "Failed to connect to MySQL: " . mysqli_connect_error();
     }
-    
+        
     //query select * from table where condition
     //format $time and zipcode(possibly if we dont use actualy zipcode
-    //Select * from Weather as a and Traffic_Incident as b where a.Zipcode = b.Zipcode and a.Date_Time = b.Date_Time and a.Date_Time like '%$time'
-    //$result = $mysqli->query($query)
+    $query = 'SELECT t.Date_Time, t.Traffic_Severity, t.Latitude, t.Longitude, t.Zipcode, t.Weather
+                FROM Traffic_Incident t
+                WHERE t.Date_Time=3, t.Zipcode=7016, t.Weather=Sunny';
+    $result = $mysqli->query($query);
+    $resultArray = array();
+    $resultIndex = 0;
     //parse return
-    //while($row = $result->fetch_row()) {
-    //put into array
-    //}
+    while($row = $result->fetch_row()) {
+        $lngLat = $row[2] . ',' . $row[3];
+        $colorNumber = $row[1]/10;
+        $resultArray[resultIndex] = array('lngLat'=>$lngLat,'color'=>$colorNumber);
+        $resultIndex++;
+    }
     
     mysqli_close($con);
-    //return rows array
+    return $resultArray;
 }
 ?>

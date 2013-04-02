@@ -2,6 +2,7 @@
 //need to build in error conditions for fields not selected or properly filled out
 //also need sql sanitation
 //include 'sqlQueries.php';
+//include 'polyEncode.php';
 if($_POST) {
     if(isset($_POST['zipcode'])) {
         $zipcode = $_POST['zipcode'];
@@ -23,12 +24,83 @@ if($_POST) {
         //error coding for empty time
     }
     */
-    //mapTrafficPoints($zipcode, $timeSelected, $weatherSelected);
+    $points = new array();
+    $points = mapTrafficPoints($zipcode, $timeSelected, $weatherSelected);
+    //$pointsToEncode = array();
+    //$pointsEncodeIndex = 0;
+    //$pointsIndex = 0;
+    //while($$pointsIndex<count($points)) {
+    //    $$pointsIndex1 = $$pointsIndex + 1;
+    //    $points[$$pointsEncodeIndex] = array('x'=>$arr[$x], 'y'=>$arr[$x1]);
+    //    $$pointsEncodeIndex++;
+    //    $$pointsIndex += 2; 
+    //}
+    //$polylineEncoder = new PolylineEncoder();
+
+    //foreach ($pointsToEncode as $point) {
+    //    $polylineEncoder->addPoint($point['x'], $point['y']);
+    //}
+    //$encodedString = $polylineEncoder->encodedString();
+    
+    //intensity 1 - 00FF00
+    //intensity 2 - CCFF00
+    //intensity 3 - FFFF00
+    //intensity 4 - FF9900
+    //intensity 5 - FF0000
+    $color1 = 'markers=color:0x00FF00';
+    $color2 = 'markers=color:0xCCFF00';
+    $color3 = 'markers=color:0xFFFF00';
+    $color4 = 'markers=color:0xFF9900';
+    $color5 = 'markers=color:0xFF0000';
+    $flag1 = 0;
+    $flag2 = 0;
+    $flag3 = 0;
+    $flag4 = 0;
+    $flag5 = 0;
+    
+    foreach ($points as $point) {
+        if($point['color'] == 1) {
+            $color1 .= '|' . $point['lngLat'];
+            $flag1 = 1;
+        }
+        else if($point['color'] == 2) {
+            $color2 .= '|' . $point['lngLat'];
+            $flag2 = 1;
+        }
+        else if($point['color'] == 3) {
+            $color3 .= '|' . $point['lngLat'];
+            $flag3 = 1;
+        }
+        else if($point['color'] == 4) {
+            $color4 .= '|' . $point['lngLat'];
+            $flag4 = 1;
+        }
+        else if($point['color'] == 5) {
+            $color5 .= '|' . $point['lngLat'];
+            $flag5 = 1;
+        }
+    }
     
     //for google
     //key: AIzaSyAdM76kzhZ0uwCyHxZLogbt5Sc9PrF1RpM
-    //linkg: http://maps.googleapis.com/maps/api/staticmap?center=New+York,NY&zoom=13&size=600x300&key=API_console_key
-    $googleImgSrc = "http://maps.googleapis.com/maps/api/staticmap?center=" . $zipcode . "&zoom=10&size=640x640&scale=2&key=AIzaSyAdM76kzhZ0uwCyHxZLogbt5Sc9PrF1RpM&sensor=false";
+    //link: http://maps.googleapis.com/maps/api/staticmap?center=New+York,NY&zoom=13&size=600x300&key=API_console_key
+    $googleImgSrc = "http://maps.googleapis.com/maps/api/staticmap?center=" . $zipcode . "&zoom=10&size=640x640&scale=2&key=AIzaSyAdM76kzhZ0uwCyHxZLogbt5Sc9PrF1RpM";
+    if($flag1 == 1) {
+        $googleImgSrc .= "&" . $color1 . "&";
+    }
+    if($flag2 == 1) {
+        $googleImgSrc .= "&" . $color2 . "&";
+    }
+    if($flag3 == 1) {
+        $googleImgSrc .= "&" . $color3 . "&";
+    }
+    if($flag4 == 1) {
+        $googleImgSrc .= "&" . $color4 . "&";
+    }
+    if($flag5 == 1) {
+        $googleImgSrc .= "&" . $color5 . "&";
+    }
+    $googleImgSrc .= "&sensor=false";
     //can either echo or just construct it in html
     //$htmlImg = "<img id='mapImg' src= '" . $googleImgSrc . "' alt='Map Image of " . $zipcode . "'><label id='zoomLvl' value='10' style='display:none;'></label>";
     //echo $htmlImg;
