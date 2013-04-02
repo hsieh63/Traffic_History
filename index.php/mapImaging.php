@@ -120,7 +120,6 @@ if($_POST) {
     //http://www.mapquestapi.com/staticmap/v4/getmap?key=Fmjtd%7Cluub2168nu%2Cax%3Do5-96zg9u&location= zipcode &size=640,640&zoom=&scale=
 }
 ?>
-<img id='mapImg' src= '<?php echo $googleImgSrc ?>' alt='Map Image of <?php echo $zipcode ?>'>
 <table style="text-align:center;">
     <th>
         Severity color correspondence (low to high)
@@ -129,28 +128,22 @@ if($_POST) {
         <td>
             <label style="background-color:#00FF00;">Severity : 1 (lowest)</label>
         </td>
-    </tr>
-    <tr> 
         <td>
             <label style="background-color:#CCFF00;">Severity : 2 (lower)</label>
         </td>
-    </tr>
-    <tr>
         <td>
             <label style="background-color:#FFFF00;">Severity : 3 (medium)</label>
         </td>
-    </tr>
-    <tr>
         <td>
             <label style="background-color:#FF9900;">Severity : 4 (higher)</label>
         </td>
-    </tr>
-    <tr>
         <td>
             <label style="background-color:#FF0000;">Severity : 5 (highest)</label>
         </td>
     </tr>
 </table>
+<br>
+<img id='mapImg' src= '<?php echo $googleImgSrc ?>' alt='Map Image of <?php echo $zipcode ?>'>
 <br>
 <label id='zoomLvl' value='10' style='display:none;'></label>
 <!--

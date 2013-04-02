@@ -1,6 +1,6 @@
 ﻿<html>
   <head>
-     <title>Report One Part One</title>
+     <title>Report Two Part Two</title>
      <script type="text/javascript" src="/scripts/pdfobject.js"></script>
      <script type="text/javascript">
       window.onload = function (){
