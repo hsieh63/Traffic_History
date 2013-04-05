@@ -29,17 +29,18 @@ my %hash = %$hashRef; #deference hash number to a hash
 
 if ($response->is_success) {
 	#print $response->content;
-	#next part is just a simple loop through hash to see whats inside
+	#loops through the return to get the long lat
 	my $i = 0;
+	#print %{@{$hash{'incidents'}}[2]};
 	foreach my $key( keys %hash) {
 		#print "key: $key, value: " . $hash{$key} . "\n";
 		if($key eq "incidents") {
 			my @arrayIncidents = @{$hash{$key}};
-			foreach(@arrayIncidents){
+			foreach(@arrayIncidents) {
 				my ($long, $lat) = 0;
 				my %hashNest = %{$_};
 				foreach my $key2(keys %hashNest) {
-					print "key: $key2, value: " . $hashNest{$key2} . "\n";
+					#print "key: $key2, value: " . $hashNest{$key2} . "\n";
 					if($key2 eq "lng") {
 						$long = $hashNest{$key2};
 					}
@@ -72,7 +73,7 @@ if ($response->is_success) {
 											#print "Key: " . $_ . "\n";
 											my %hashNestLoc = %{$_};
 											foreach my $hashLoc( keys %hashNestLoc) {
-												print "keyLoc: $hashLoc, value: " . $hashNestLoc{$hashLoc} . "\n";
+												#print "keyLoc: $hashLoc, value: " . $hashNestLoc{$hashLoc} . "\n";
 											}
 											#$hashNestLoc{"postalCode"} eq zipcode of area looking at
 											#set flag so that this does not get inserted into 
@@ -102,7 +103,7 @@ if ($response->is_success) {
 		}
 		$i++;
 		#for debug purpose stops at one call
-		#last if ($i == 3);
+		last if ($i == 3);
 	}
 	print "Success\n";
 }
