@@ -22,10 +22,10 @@ my $auth = 'password';
 #Use DBD::OBDC module to connect to SQL database 
 my $dbh = DBI->connect('DBI:ODBC:localDSN',
 			$user,
-			$auth,  #might have different parameters
+			$auth,  
 			) || die "Database connection not made: $DBI::errstr";
 					  
-#Prepare the SQL insertion - just test that it works
+#Prepare the SQL insertion query- COLUMN NAMES LISTED MUST MATCH DATABASE COLUMN NAMES
 my $SQLinsert = "INSERT INTO Weather (Zipcode, Weather, Date_Time)" .
 				 "VALUES (?, ?, ?)";
 my $query_handle; 
@@ -66,27 +66,36 @@ sub getWeather(){
 	#	exit 1;
 	}
 
+	#Converts the string obtained from the API into an integer from 0-7
+	#The string is in the format "Last updated on 12:35 PM"
+	#12-2:59AM = 1, 3-5:59AM = 2, ... , 9-11:59PM = 7
+	
 	sub convertTime{
 	my $obs_time = $_[0];
-		if($obs_time =~ /((\d)+):\d\d\s((AM|PM))/) {
+		if($obs_time =~ /((\d)+):\d\d\s((AM|PM))/) {	#checks if the format is in the string obtained
 			my $hour = $1;
 			my $period = $3;
 
+			#Returns an integer from 0-3 if period is AM
 			if($period eq "AM") {
+				#Chooses an integer depending on the hour
 				if ($hour == 12 or $hour == 1 or $hour == 2){
-					return 1;
+					return 0;
 				}
 				if ($hour == 3 or $hour == 4 or $hour == 5){
-					return 2;
+					return 1;
 				}
 				if ($hour == 6 or $hour == 7 or $hour == 8){
-					return 3;
+					return 2;
 				}
 				if ($hour == 9 or $hour == 10 or $hour == 11){
-					return 4;
+					return 3;
 				}			
 			}
+			
+			#Returns an integer from 4-7 if the period is PM
 			if($period eq "PM") {
+				#Chooses an integer depending on the hour
 				if ($hour == 12 or $hour == 1 or $hour == 2){
 					return 4;
 				}
@@ -128,21 +137,21 @@ sub getWeather(){
 		if ($response->is_success) {
 			my %hashNest = %{$hash{"current_observation"}};			
 			
-			my $zipcode = $zip;
-			my $description = $hashNest{"icon"};
-			my $time = $hashNest{"observation_time"};
-			my $converted_time = convertTime($time);
+			#DATABASE IMPLEMENTATION - the data we need is to be stored in our database
+			#define variables which will be stored in the database
+			my $zipcode = $zip;							#Zip Code
+			my $description = $hashNest{"icon"};		#Description of Incident
+			my $time = $hashNest{"observation_time"};	#Time incident occured
+			my $converted_time = convertTime($time);	#Converted integer from 0-7 (see subscript convertTime)
 			
-			print $zipcode;
-			print $description;
-			print $time;
-			print $converted_time;
-			
+			#if the query handle is not yet defined, define it here (prevents the overhead of defining it in every loop)
 			if(! defined $query_handle) {
 				$query_handle = $dbh->prepare($SQLinsert)
 					or die "Couldn't prepare statement: " . $dbh->errstr;
 			}
 			
+			#execute the query handle
+			#executes the SQL query defined by the handle and stores the given variables in the database using the DBI
 			$query_handle->execute($zipcode, $description, $converted_time);
 			
 		}
