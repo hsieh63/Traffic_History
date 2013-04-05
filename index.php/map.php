@@ -61,7 +61,7 @@ $(document).ready(function() {
             <option value="4">12am-3pm</option>
             <option value="5">3pm-6pm</option>
             <option value="6">6pm-9pm</option>
-            <option value="7">9pm-12pm</option>
+            <option value="7">9pm-12am</option>
         </select>
         <select name="weather" required>
             <option value="-1" selected="selected" disabled>Select weather condition</option>
