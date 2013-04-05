@@ -13,6 +13,7 @@ $(document).ready(function() {
             success: function(response) {
                 //$('#zoomIn').show();
                 //$('#zoomOut').show();
+                $('#intensityColorTble').show();
                 $('#mapImageData').find('#formResult').html(response);
                 //alert('Success');
             },
@@ -72,6 +73,32 @@ $(document).ready(function() {
         <br>
         <button id="zoomIn" type="button" style="display: none;">Zoom In</button>
         <button id="zoomOut" type="button" style="display: none;">Zoom Out</button>
+        <br>
+        <table id="intensityColorTble" style="text-align:center;display: none;">
+            <tr>
+                <td colspan=5>
+                    Severity color correspondence (low to high)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label style="background-color:#00FF00;">Severity : 1 (lowest)</label>
+                </td>
+                <td>
+                    <label style="background-color:#CCFF00;">Severity : 2 (lower)</label>
+                </td>
+                <td>
+                    <label style="background-color:#FFFF00;">Severity : 3 (medium)</label>
+                </td>
+                <td>
+                    <label style="background-color:#FF9900;">Severity : 4 (higher)</label>
+                </td>
+                <td>
+                    <label style="background-color:#FF0000;">Severity : 5 (highest)</label>
+                </td>
+            </tr>
+        </table>
+        <br>
         <div id="formResult"> </div>
         </form>
     </div>

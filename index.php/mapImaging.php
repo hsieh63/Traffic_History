@@ -105,6 +105,10 @@ if($_POST) {
         $googleImgSrc .= "&" . $color5 . "&";
         $lastAnd = 1;
     }
+    if($lastAnd == 0) {
+        $googleImgSrc .= "&center=" . $zipcode;
+        echo "<label>No history found for " . $zipcode . "</label><br>";
+    }
     if($lastAnd == 1) {
         $googleImgSrc .= "sensor=false";
     }
@@ -120,31 +124,6 @@ if($_POST) {
     //http://www.mapquestapi.com/staticmap/v4/getmap?key=Fmjtd%7Cluub2168nu%2Cax%3Do5-96zg9u&location= zipcode &size=640,640&zoom=&scale=
 }
 ?>
-<table style="text-align:center;">
-    <tr>
-        <td colspan=5>
-            Severity color correspondence (low to high)
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <label style="background-color:#00FF00;">Severity : 1 (lowest)</label>
-        </td>
-        <td>
-            <label style="background-color:#CCFF00;">Severity : 2 (lower)</label>
-        </td>
-        <td>
-            <label style="background-color:#FFFF00;">Severity : 3 (medium)</label>
-        </td>
-        <td>
-            <label style="background-color:#FF9900;">Severity : 4 (higher)</label>
-        </td>
-        <td>
-            <label style="background-color:#FF0000;">Severity : 5 (highest)</label>
-        </td>
-    </tr>
-</table>
-<br>
 <img id='mapImg' src= '<?php echo $googleImgSrc ?>' alt='Map Image of <?php echo $zipcode ?>'>
 <br>
 <label id='zoomLvl' value='10' style='display:none;'></label>
