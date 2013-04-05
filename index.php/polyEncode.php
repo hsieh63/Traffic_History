@@ -2,7 +2,7 @@
 
 /*!
  * PHP Polyline Encoder
- *
+    class to encode longitude and latidue into polyline
  */
 
 class PolylineEncoder {

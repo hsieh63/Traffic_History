@@ -1,4 +1,7 @@
 ﻿<?php
+/*
+    PHP file to construct traffic map image
+*/
 //need to build in error conditions for fields not selected or properly filled out
 //also need sql sanitation
 include 'sqlQueries.php';

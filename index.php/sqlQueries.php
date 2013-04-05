@@ -1,6 +1,12 @@
 ﻿<?php
 
 function mapTrafficPoints($zipcode, $time, $weather) {
+    /*  
+        Function requires zipcode, time, weather input
+        Will construct and execute sql query to find longitude and latitude and traffic severity to display points
+        returns array of array of points
+    */
+    
     //Create connection
     //mysqli_connect(host,username,password,dbname);
     $pattern = '/0(d+)/i';
