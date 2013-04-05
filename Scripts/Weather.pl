@@ -17,10 +17,11 @@ my $dsn = "localDSN"; 			  #Data Source Name - 'localDSN' is specific to Kevin's
 my $host = 'Q6600\Q6600MSSQL';		#change to server name
 my $database = 'trafficHistory';  #change to database name
 my $user = 'Q6600\kev';				#database user name
-my $auth = 'password';
+my $auth = 'password';				#user password
 
 #Use DBD::OBDC module to connect to SQL database 
-my $dbh = DBI->connect('DBI:ODBC:localDSN',
+#Currently uses a local DSN, this can be changed to connect to a different database
+my $dbh = DBI->connect('DBI:ODBC:localDSN',	
 			$user,
 			$auth,  
 			) || die "Database connection not made: $DBI::errstr";
@@ -28,7 +29,7 @@ my $dbh = DBI->connect('DBI:ODBC:localDSN',
 #Prepare the SQL insertion query- COLUMN NAMES LISTED MUST MATCH DATABASE COLUMN NAMES
 my $SQLinsert = "INSERT INTO Weather (Zipcode, Weather, Date_Time)" .
 				 "VALUES (?, ?, ?)";
-my $query_handle; 
+my $query_handle; 	#Initialize query handle - define later when it is necessary
 
 
 
@@ -65,6 +66,51 @@ sub getWeather(){
 		print "Cannot open file!\n";
 	#	exit 1;
 	}
+	
+	sub getInfo() {
+
+		# converts the data in the JSON object into a hash table
+		my $ua = LWP::UserAgent->new; #creates user agent to get http
+		my $url = "http://api.wunderground.com/api/e5d1818deab8c1a3/conditions/q/${zip}.json"; #sets up url, this needs to be dynamic
+		#my $url = 'http://api.wunderground.com/api/e5d1818deab8c1a3/conditions/q/CA/San_Francisco.json';
+
+		my $req = HTTP::Request->new(POST => $url); #requesting url
+		my $jsonResponse = JSON->new; #initilize json object
+		my $response = $ua->request($req); #get response to url?
+		$jsonResponse = $response->content; #set content which is a json into json object
+		my $hashRef = decode_json $jsonResponse; #decode json using module and gets a hash reference number
+		my %hash = %$hashRef; #deference hash number to a hash
+		
+
+
+		if ($response->is_success) {
+			my %hashNest = %{$hash{"current_observation"}};			
+			
+			#DATABASE IMPLEMENTATION - the data we need is to be stored in our database
+			#define variables which will be stored in the database
+			my $zipcode = $zip;							#Zip Code
+			my $description = $hashNest{"icon"};		#Description of Incident
+			my $time = $hashNest{"observation_time"};	#Time incident occured
+			my $converted_time = convertTime($time);	#Converted integer from 0-7 (see subscript convertTime)
+			
+			#if the query handle is not yet defined, define it here (prevents the overhead of defining it in every loop)
+			if(! defined $query_handle) {
+				$query_handle = $dbh->prepare($SQLinsert)
+					or die "Couldn't prepare statement: " . $dbh->errstr;
+			}
+			
+			#execute the query handle
+			#executes the SQL query defined by the handle and stores the given variables in the database using the DBI
+			$query_handle->execute($zipcode, $description, $converted_time);
+			
+		}
+		else {
+			print $response->status_line. " Fail\n";
+		}
+		
+	}
+}
+
 
 	#Converts the string obtained from the API into an integer from 0-7
 	#The string is in the format "Last updated on 12:35 PM"
@@ -117,52 +163,6 @@ sub getWeather(){
 
 		
 	
-	
-	sub getInfo() {
-
-		# converts the data in the JSON object into a hash table
-		my $ua = LWP::UserAgent->new; #creates user agent to get http
-		my $url = "http://api.wunderground.com/api/e5d1818deab8c1a3/conditions/q/${zip}.json"; #sets up url, this needs to be dynamic
-		#my $url = 'http://api.wunderground.com/api/e5d1818deab8c1a3/conditions/q/CA/San_Francisco.json';
-
-		my $req = HTTP::Request->new(POST => $url); #requesting url
-		my $jsonResponse = JSON->new; #initilize json object
-		my $response = $ua->request($req); #get response to url?
-		$jsonResponse = $response->content; #set content which is a json into json object
-		my $hashRef = decode_json $jsonResponse; #decode json using module and gets a hash reference number
-		my %hash = %$hashRef; #deference hash number to a hash
-		
-
-
-		if ($response->is_success) {
-			my %hashNest = %{$hash{"current_observation"}};			
-			
-			#DATABASE IMPLEMENTATION - the data we need is to be stored in our database
-			#define variables which will be stored in the database
-			my $zipcode = $zip;							#Zip Code
-			my $description = $hashNest{"icon"};		#Description of Incident
-			my $time = $hashNest{"observation_time"};	#Time incident occured
-			my $converted_time = convertTime($time);	#Converted integer from 0-7 (see subscript convertTime)
-			
-			#if the query handle is not yet defined, define it here (prevents the overhead of defining it in every loop)
-			if(! defined $query_handle) {
-				$query_handle = $dbh->prepare($SQLinsert)
-					or die "Couldn't prepare statement: " . $dbh->errstr;
-			}
-			
-			#execute the query handle
-			#executes the SQL query defined by the handle and stores the given variables in the database using the DBI
-			$query_handle->execute($zipcode, $description, $converted_time);
-			
-		}
-		else {
-			print $response->status_line. " Fail\n";
-		}
-		
-	}
-}
-
-
 
 #main function
 getWeather();
