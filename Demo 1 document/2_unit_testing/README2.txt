@@ -1,5 +1,7 @@
 Unit for website testing consisted of simply inputting known values and viewing the postback results and then constructing the image url
 
+These are the values we tested with.
+
 Zipcode: 07016
 Time: 9am-12pm
 Weather:Sunny
