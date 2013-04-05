@@ -1,8 +1,8 @@
 #Need to create a script to cache all possible zip codes in tristate
 #After caching this script will make a call to database to retrieve all zip codes
-#Will make a call for each zip code and only input the desired weather condition into database
+#Will make a call for each zip code and only input the desired traffic values into database
 #Things to do: cache zip codes, dynamic url call, insert into database required
-#our key for weather.com: e5d1818deab8c1a3
+#our key for developer.mapquest.com: Fmjtd%7Cluub2168nu%2Cax%3Do5-96zg9u
 
 use LWP;
 use LWP::UserAgent;
@@ -10,7 +10,6 @@ use HTTP::Request;
 use JSON;
 
 my @highwayArray = ("Route","RT","CR","I-","US","Turnpike","NJTP","Parkway","Pkwy");
-#Fmjtd%7Cluub2168nu%2Cax%3Do5-96zg9u
 my $ua = LWP::UserAgent->new; #creates user agent to get http
 
 # get zipcode and zipcode center coordinate then + or - .3 long/lat to 15 mile box
@@ -75,6 +74,8 @@ if ($response->is_success) {
 											foreach my $hashLoc( keys %hashNestLoc) {
 												print "keyLoc: $hashLoc, value: " . $hashNestLoc{$hashLoc} . "\n";
 											}
+											#$hashNestLoc{"postalCode"} eq zipcode of area looking at
+											#set flag so that this does not get inserted into 
 										}
 									}
 									elsif($key3 eq 'providedLocation') {
@@ -100,7 +101,8 @@ if ($response->is_success) {
 			}
 		}
 		$i++;
-		last if ($i == 3);
+		#for debug purpose stops at one call
+		#last if ($i == 3);
 	}
 	print "Success\n";
 }
