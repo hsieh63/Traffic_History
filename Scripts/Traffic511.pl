@@ -26,8 +26,8 @@ my $dbh = DBI->connect('DBI:ODBC:localDSN',
 			) || die "Database connection not made: $DBI::errstr";
 					  
 #Prepare the SQL insertion query- COLUMN NAMES LISTED MUST MATCH DATABASE COLUMN NAMES
-my $SQLinsert = "INSERT INTO Weather (Zipcode, Weather, Date_Time)" .
-				 "VALUES (?, ?, ?)";
+my $SQLinsert = "INSERT INTO Weather (Longitude, Latitude, Traffic_Descrip, Date_Time)" .
+				 "VALUES (?, ?, ?, ?)";
 my $query_handle; 	#Initialize query handle - define later when it is necessary
 
 

@@ -8,6 +8,7 @@ use LWP;
 use LWP::UserAgent;
 use HTTP::Request;
 use JSON;
+use DBI;
 
 my @highwayArray = ("Route","RT","CR","I-","US","Turnpike","NJTP","Parkway","Pkwy");
 my $ua = LWP::UserAgent->new; #creates user agent to get http
@@ -28,6 +29,27 @@ my $hashRef = decode_json $jsonResponse; #decode json using module and gets a ha
 my %hash = %$hashRef; #deference hash number to a hash
 
 if ($response->is_success) {
+
+	#Database Implementation - Connect to database using DBI
+	#Config variables - for now, can only compile on Kevin's local computer 
+	my $dsn = "localDSN"; 			  #Data Source Name - 'localDSN' is specific to Kevin's computer
+	my $host = 'Q6600\Q6600MSSQL';		#change to server name
+	my $database = 'trafficHistory';  #change to database name
+	my $user = 'Q6600\kev';				#database user name
+	my $auth = 'password';				#user password
+
+	#Use DBD::OBDC module to connect to SQL database 
+	#Currently uses a local DSN, this can be changed to connect to a different database
+	my $dbh = DBI->connect('DBI:ODBC:localDSN',	
+				$user,
+				$auth,  
+				) || die "Database connection not made: $DBI::errstr";
+					  
+	#Prepare the SQL insertion query- COLUMN NAMES LISTED MUST MATCH DATABASE COLUMN NAMES
+	my $SQLinsert = "INSERT INTO Weather (Longitude, Latitude, Traffic_Descrip, Date_Time)" .
+					"VALUES (?, ?, ?, ?)";
+	my $query_handle; 	#Initialize query handle - define later when it is necessary
+
 	#print $response->content;
 	#loops through the return to get the long lat
 	my $i = 0;
@@ -94,6 +116,16 @@ if ($response->is_success) {
 						}
 					}
 					print "Geo Success\n";
+					
+					#STILL TO BE IMPLEMENTED - Prepare the query and execute it, adding a new incident row to our database
+					#if the query handle is not yet defined, define it here (prevents the overhead of defining it in every loop)
+					#	if(! defined $query_handle) {
+					#	$query_handle = $dbh->prepare($SQLinsert)
+					#		or die "Couldn't prepare statement: " . $dbh->errstr;
+					#	}
+						#execute the query handle - STILL TO BE IMPLEMENTED
+						#executes the SQL query defined by the handle and stores the given variables in the database using the DBI
+						#$query_handle->execute($long, $lat, $description, $time);
 				}
 				else {
 					print $response->status_line. " Fail\n";
