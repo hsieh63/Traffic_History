@@ -1,9 +1,10 @@
 Data Collection
 
-#Peter put stuff here about what you did to get data
-#getting data from API's and such; probably should describe
-#each website we got data from and what you had to do 
-#differently for each one blahblahblah 
+We currently have three functioning data collection scripts.  Our Weather script gathers data automatically from the Wunderground API.  First, it reads an input file of zip codes.  Weather information is accessed from the API by changing the zip codes in the url through string manipulation - by looping through all the zip codes in the input file, weather information can be accessed for any zip code we desire.  In order to obtain the information for each zip code, we extract JSON object information and store it into a hash table.
+
+The NJ511 script gathers data from the RSS feeds on 511NJ.org when it is run.  A list of updated traffic incidents are kept in an XML file.
+
+The scripts for extracting data from the Bing Maps API and the Nokia Maps API are still works in progress.
 
 Database Implementation
 
@@ -17,4 +18,4 @@ This allows us to create SQL queries in our Perl script and use the DBI to conne
 
 As of now, we have database implementations for our Weather script, and our NJ511 script.  We still have to include database implementation for our Mapquest and Bingmaps scripts; this should not be hard, as all DBI implementations are very similar.
 
-PETER ADD ANYTHING WE STILL HAVE TO DO HERE
+
