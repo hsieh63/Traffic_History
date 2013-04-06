@@ -19,3 +19,7 @@ This allows us to create SQL queries in our Perl script and use the DBI to conne
 As of now, we have database implementations for our Weather script, and our NJ511 script.  We still have to include database implementation for our Mapquest and Bingmaps scripts; this should not be hard, as all DBI implementations are very similar.
 
 
+
+README: We are still using a local MSSQL database.  As such, we can only compile any program involving database implementation on a local computer.  This will change when we migrate to a bigger database which has enough space to store all our data.  However, we included two test scripts which demonstrate data collection from the Wundergrounds API and from NJ511.org.  They are located in the 'Test Scripts without Database' folder, and should compile successfully.
+
+
