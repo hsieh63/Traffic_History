@@ -41,7 +41,7 @@ my %hash = %$hashRef; #deference hash number to a hash
 
 if ($response->is_success) {
 	
-		#Database Implementation - Connect to database using DBI
+	#Database Implementation - Connect to database using DBI
 	#Config variables - for now, can only compile on Kevin's local computer 
 	my $dsn = "localDSN"; 			  #Data Source Name - 'localDSN' is specific to Kevin's computer
 	my $host = 'Q6600\Q6600MSSQL';		#change to server name
@@ -60,6 +60,7 @@ if ($response->is_success) {
 	my $SQLinsert = "INSERT INTO Weather (Longitude, Latitude, Traffic_Descrip, Date_Time)" .
 					"VALUES (?, ?, ?, ?)";
 	my $query_handle; 	#Initialize query handle - define later when it is necessary
+	#user prepare statement and use the execute later when insertion is needed
 	
 	#print $response->content;
 	#loops through the return to get the long lat
