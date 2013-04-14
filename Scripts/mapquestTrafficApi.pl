@@ -1,8 +1,17 @@
+#old idea
 #Need to create a script to cache all possible zip codes in tristate
 #After caching this script will make a call to database to retrieve all zip codes
-#Will make a call for each zip code and only input the desired traffic values into database
+
+#to add
+#should add error checkers for in case map service fails or has exceeded limits
 #Things to do: cache zip codes, dynamic url call, insert into database required
 #our key for developer.mapquest.com: Fmjtd%7Cluub2168nu%2Cax%3Do5-96zg9u
+
+#new idea
+#create bounding box to cover area
+#have it cover all of tristate
+#input into database
+
 
 use LWP;
 use LWP::UserAgent;
@@ -10,10 +19,12 @@ use HTTP::Request;
 use JSON;
 use DBI;
 
-my @highwayArray = ("Route","RT","CR","I-","US","Turnpike","NJTP","Parkway","Pkwy");
+#my @highwayArray = ("Route","RT","CR","I-","US","Turnpike","NJTP","Parkway","Pkwy");
 my $ua = LWP::UserAgent->new; #creates user agent to get http
 
 # get zipcode and zipcode center coordinate then + or - .3 long/lat to 15 mile box
+# need to store current zipcode we are looking, later filter result by zipcode so no overlap from other reports
+# even better is create bounding box big enough to go by sections since by zipcode is not a neccesity
 my $url = 'http://www.mapquestapi.com/traffic/v1/incidents?key=Fmjtd%7Cluub2168nu%2Cax%3Do5-96zg9u&boundingBox=40.928272,-74.269274,40.511944,-73.719958&filters=construction,incidents&inFormat=kvp&outFormat=json'; #sets up url, this needs to be dynamic
 #my $url = 'http://www.mapquestapi.com/traffic/v1/incidents?key=Fmjtd%7Cluub2168nu%2Cax%3Do5-96zg9u&callback=handleIncidentsResponse&boundingBox=40.928272,-74.269274,40.511944,-73.719958&filters=construction,incidents&inFormat=kvp&outFormat=json'; #sets up url, this needs to be dynamic
 
@@ -29,8 +40,8 @@ my $hashRef = decode_json $jsonResponse; #decode json using module and gets a ha
 my %hash = %$hashRef; #deference hash number to a hash
 
 if ($response->is_success) {
-
-	#Database Implementation - Connect to database using DBI
+	
+		#Database Implementation - Connect to database using DBI
 	#Config variables - for now, can only compile on Kevin's local computer 
 	my $dsn = "localDSN"; 			  #Data Source Name - 'localDSN' is specific to Kevin's computer
 	my $host = 'Q6600\Q6600MSSQL';		#change to server name
@@ -49,7 +60,7 @@ if ($response->is_success) {
 	my $SQLinsert = "INSERT INTO Weather (Longitude, Latitude, Traffic_Descrip, Date_Time)" .
 					"VALUES (?, ?, ?, ?)";
 	my $query_handle; 	#Initialize query handle - define later when it is necessary
-
+	
 	#print $response->content;
 	#loops through the return to get the long lat
 	my $i = 0;
@@ -63,6 +74,7 @@ if ($response->is_success) {
 				my %hashNest = %{$_};
 				foreach my $key2(keys %hashNest) {
 					#print "key: $key2, value: " . $hashNest{$key2} . "\n";
+					#keys: lat, lng, severity?,fullDesc,shortDesc, others????
 					if($key2 eq "lng") {
 						$long = $hashNest{$key2};
 					}
@@ -95,47 +107,51 @@ if ($response->is_success) {
 											#print "Key: " . $_ . "\n";
 											my %hashNestLoc = %{$_};
 											foreach my $hashLoc( keys %hashNestLoc) {
+												#keys: street,postalCode,adminArea5?(city),adminArea4?(county),adminArea3(state),sideOfStreet?
 												#print "keyLoc: $hashLoc, value: " . $hashNestLoc{$hashLoc} . "\n";
 											}
 											#$hashNestLoc{"postalCode"} eq zipcode of area looking at
 											#set flag so that this does not get inserted into 
 										}
 									}
-									elsif($key3 eq 'providedLocation') {
-										my %hashProvLoc = %{$hashNestGeo{$key3}};
-										foreach my $provLoc( keys %hashProvLoc) {
-											#print "keyGeo: $provLoc, value: " . $hashProvLoc{$provLoc} . "\n";
-											my %hashNestProvLoc = %{$hashProvLoc{$provLoc}};
-											foreach my $key4( keys %hashNestProvLoc) {
-												#print "keyGeo: $key4, value: " . $hashNestProvLoc{$key4} . "\n";
-											}
-										}
-									}
+									#elsif($key3 eq 'providedLocation') {
+									#	my %hashProvLoc = %{$hashNestGeo{$key3}};
+									#	foreach my $provLoc( keys %hashProvLoc) {
+									#		#print "keyGeo: $provLoc, value: " . $hashProvLoc{$provLoc} . "\n";
+									#		my %hashNestProvLoc = %{$hashProvLoc{$provLoc}};
+									#		foreach my $key4( keys %hashNestProvLoc) {
+									#			#print "keyGeo: $key4, value: " . $hashNestProvLoc{$key4} . "\n";
+									#		}
+									#	}
+									#}
 								}
 							}
 						}
 					}
 					print "Geo Success\n";
-					
-					#STILL TO BE IMPLEMENTED - Prepare the query and execute it, adding a new incident row to our database
-					#if the query handle is not yet defined, define it here (prevents the overhead of defining it in every loop)
-					#	if(! defined $query_handle) {
-					#	$query_handle = $dbh->prepare($SQLinsert)
-					#		or die "Couldn't prepare statement: " . $dbh->errstr;
-					#	}
-						#execute the query handle - STILL TO BE IMPLEMENTED
-						#executes the SQL query defined by the handle and stores the given variables in the database using the DBI
-						#$query_handle->execute($long, $lat, $description, $time);
 				}
 				else {
 					print $response->status_line. " Fail\n";
 				}
-			last;
+			#need to add error checking so not inserting bad data
+			#here we should've put all necessary values into variables
+			#put insert into database here
+			
+			#STILL TO BE IMPLEMENTED - Prepare the query and execute it, adding a new incident row to our database
+			#if the query handle is not yet defined, define it here (prevents the overhead of defining it in every loop)
+			#	if(! defined $query_handle) {
+			#	$query_handle = $dbh->prepare($SQLinsert)
+			#		or die "Couldn't prepare statement: " . $dbh->errstr;
+			#	}
+				#execute the query handle - STILL TO BE IMPLEMENTED
+				#executes the SQL query defined by the handle and stores the given variables in the database using the DBI
+				#$query_handle->execute($long, $lat, $description, $time);
+			
+			#for debug purpose to view only 1 incident
+			#last;
 			}
 		}
 		$i++;
-		#for debug purpose stops at one call
-		last if ($i == 3);
 	}
 	print "Success\n";
 }
