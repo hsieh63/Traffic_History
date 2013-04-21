@@ -65,95 +65,99 @@ if ($response->is_success) {
 	#print $response->content;
 	#loops through the return to get the long lat
 	my $i = 0;
+	my ($long, $lat) = 0;
+	my ($zipcode,$severity,$street,$county,$state,$shortDes);
 	#print %{@{$hash{'incidents'}}[2]};
-	foreach my $key( keys %hash) {
-		#print "key: $key, value: " . $hash{$key} . "\n";
-		if($key eq "incidents") {
-			my @arrayIncidents = @{$hash{$key}};
-			foreach(@arrayIncidents) {
-				my ($long, $lat) = 0;
-				my %hashNest = %{$_};
-				foreach my $key2(keys %hashNest) {
-					#print "key: $key2, value: " . $hashNest{$key2} . "\n";
-					#keys: lat, lng, severity?,fullDesc,shortDesc, others????
-					if($key2 eq "lng") {
-						$long = $hashNest{$key2};
-					}
-					elsif($key2 eq "lat"){
-						$lat = $hashNest{$key2};
-					}
-				}
-				my $geoUrl = "http://www.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd|luub2168nu%2Cax%3Do5-96zg9u&json={location:{latLng:{lat:$lat,lng:$long}}}";
-				my $reqGeo = HTTP::Request->new(POST => $geoUrl); #requesting url
-				my $jsonResponseGeo = JSON->new; #initilize json object
-				my $responseGeo = $ua->request($reqGeo); #get response to url?
-				$jsonResponseGeo = $responseGeo->content;
-				my $hashRefGeo = decode_json $jsonResponseGeo; #decode json using module and gets a hash reference number
-				my %hashGeo = %$hashRefGeo; #deference hash number to a hash
-				
-				if ($responseGeo->is_success) {
-					#print $response->content;
-					#next part is just a simple loop through hash to see whats inside
-					foreach my $keyGeo( keys %hashGeo) {
-						#print "keyGeo: $keyGeo, value: " . $hashGeo{$keyGeo} . "\n";
-						if($keyGeo eq "results") {
-							my @arrayGeo = @{$hashGeo{$keyGeo}};
-							foreach(@arrayGeo){
-								my %hashNestGeo = %{$_};
-								foreach my $key3(keys %hashNestGeo) {
-									#print "key3: $key3, value: " . $hashNestGeo{$key3} . "\n";
-									if($key3 eq 'locations') {
-										my @arrayLoc = @{$hashNestGeo{$key3}};
-										foreach(@arrayLoc){
-											#print "Key: " . $_ . "\n";
-											my %hashNestLoc = %{$_};
-											foreach my $hashLoc( keys %hashNestLoc) {
-												#keys: street,postalCode,adminArea5?(city),adminArea4?(county),adminArea3(state),sideOfStreet?
-												#print "keyLoc: $hashLoc, value: " . $hashNestLoc{$hashLoc} . "\n";
-											}
-											#$hashNestLoc{"postalCode"} eq zipcode of area looking at
-											#set flag so that this does not get inserted into 
-										}
-									}
-									#elsif($key3 eq 'providedLocation') {
-									#	my %hashProvLoc = %{$hashNestGeo{$key3}};
-									#	foreach my $provLoc( keys %hashProvLoc) {
-									#		#print "keyGeo: $provLoc, value: " . $hashProvLoc{$provLoc} . "\n";
-									#		my %hashNestProvLoc = %{$hashProvLoc{$provLoc}};
-									#		foreach my $key4( keys %hashNestProvLoc) {
-									#			#print "keyGeo: $key4, value: " . $hashNestProvLoc{$key4} . "\n";
-									#		}
-									#	}
-									#}
-								}
-							}
-						}
-					}
-					print "Geo Success\n";
-				}
-				else {
-					print $response->status_line. " Fail\n";
-				}
-			#need to add error checking so not inserting bad data
-			#here we should've put all necessary values into variables
-			#put insert into database here
-			
-			#STILL TO BE IMPLEMENTED - Prepare the query and execute it, adding a new incident row to our database
-			#if the query handle is not yet defined, define it here (prevents the overhead of defining it in every loop)
-			#	if(! defined $query_handle) {
-			#	$query_handle = $dbh->prepare($SQLinsert)
-			#		or die "Couldn't prepare statement: " . $dbh->errstr;
+	my @arrayIncidents = @{$hash{incidents}};
+	foreach(@arrayIncidents) {
+		my %hashNest = %{$_};
+		$lat = $hashNest{lat};
+		$long = $hashNest{lng};
+		$severity = $hashNest{severity};
+		$shortDes = $hashNest{shortDesc};
+		#foreach my $key2(keys %hashNest) {
+		#	#print "key: $key2, value: " . $hashNest{$key2} . "\n";
+		#	#keys: lat, lng, severity?,fullDesc,shortDesc, others????
+		#}
+		my $geoUrl = "http://www.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd|luub2168nu%2Cax%3Do5-96zg9u&json={location:{latLng:{lat:$lat,lng:$long}}}";
+		my $reqGeo = HTTP::Request->new(POST => $geoUrl); #requesting url
+		my $jsonResponseGeo = JSON->new; #initilize json object
+		my $responseGeo = $ua->request($reqGeo); #get response to url?
+		$jsonResponseGeo = $responseGeo->content;
+		my $hashRefGeo = decode_json $jsonResponseGeo; #decode json using module and gets a hash reference number
+		my %hashGeo = %$hashRefGeo; #deference hash number to a hash
+		
+		if ($responseGeo->is_success) {
+			#print $response->content;
+			$street = $hashGeo{results}[0]{locations}[0]{street};
+			$county = $hashGeo{results}[0]{locations}[0]{adminArea4};
+			$state = $hashGeo{results}[0]{locations}[0]{adminArea5};
+			$zipcode = $hashGeo{results}[0]{locations}[0]{postalCode};
+			#next part is just a simple loop through hash to see whats inside
+			#foreach my $keyGeo( keys %hashGeo) {
+			#	#print "keyGeo: $keyGeo, value: " . $hashGeo{$keyGeo} . "\n";
+			#	if($keyGeo eq "results") {
+			#		my @arrayGeo = @{$hashGeo{$keyGeo}};
+			#		foreach(@arrayGeo){
+			#			my %hashNestGeo = %{$_};
+			#			foreach my $key3(keys %hashNestGeo) {
+			#				#print "key3: $key3, value: " . $hashNestGeo{$key3} . "\n";
+			#				if($key3 eq 'locations') {
+			#					my @arrayLoc = @{$hashNestGeo{$key3}};
+			#					foreach(@arrayLoc){
+			#						#print "Key: " . $_ . "\n";
+			#						my %hashNestLoc = %{$_};
+			#						#foreach my $hashLoc( keys %hashNestLoc) {
+			#							#keys: street,postalCode,adminArea5?(city),adminArea4?(county),adminArea3(state),sideOfStreet?
+			#							#print "keyLoc: $hashLoc, value: " . $hashNestLoc{$hashLoc} . "\n";												
+			#						#}
+			#						#$hashNestLoc{"postalCode"} eq zipcode of area looking at
+			#						#set flag so that this does not get inserted into 
+			#					}
+			#				}
+			#				#elsif($key3 eq 'providedLocation') {
+			#				#	my %hashProvLoc = %{$hashNestGeo{$key3}};
+			#				#	foreach my $provLoc( keys %hashProvLoc) {
+			#				#		#print "keyGeo: $provLoc, value: " . $hashProvLoc{$provLoc} . "\n";
+			#				#		my %hashNestProvLoc = %{$hashProvLoc{$provLoc}};
+			#				#		foreach my $key4( keys %hashNestProvLoc) {
+			#				#			#print "keyGeo: $key4, value: " . $hashNestProvLoc{$key4} . "\n";
+			#				#		}
+			#				#	}
+			#				#}
+			#			}
+			#		}
 			#	}
-				#execute the query handle - STILL TO BE IMPLEMENTED
-				#executes the SQL query defined by the handle and stores the given variables in the database using the DBI
-				#$query_handle->execute($long, $lat, $description, $time);
-			
-			#for debug purpose to view only 1 incident
-			#last;
-			}
+			#}
+			print "Geo Success\n";
 		}
-		$i++;
+		else {
+			print $response->status_line. " Fail\n";
+		}
+		#need to add error checking so not inserting bad data
+		#here we should've put all necessary values into variables
+		#put insert into database here
+		
+		#STILL TO BE IMPLEMENTED - Prepare the query and execute it, adding a new incident row to our database
+		#if the query handle is not yet defined, define it here (prevents the overhead of defining it in every loop)
+		#	if(! defined $query_handle) {
+		#	$query_handle = $dbh->prepare($SQLinsert)
+		#		or die "Couldn't prepare statement: " . $dbh->errstr;
+		#	}
+			#execute the query handle - STILL TO BE IMPLEMENTED
+			#executes the SQL query defined by the handle and stores the given variables in the database using the DBI
+			#$query_handle->execute($long, $lat, $description, $time);
+		
+		#for debug purpose to view only 1 incident
+		#last;
 	}
+	#foreach my $key( keys %hash) {
+	#	#print "key: $key, value: " . $hash{$key} . "\n";
+	#	if($key eq "incidents") {
+	#		my @arrayIncidents = @{$hash{$key}};
+	#	}
+	#	$i++;
+	#}
 	print "Success\n";
 }
 else {
