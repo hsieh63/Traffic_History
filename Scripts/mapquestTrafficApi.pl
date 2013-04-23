@@ -206,14 +206,14 @@ foreach my $number (sort keys %boundingBox) {
 				#executes the SQL query defined by the handle and stores the given variables in the database using the DBI
 				
 				if ($stateFlag == 0){
-					my $sth = $dbh->prepare("INSERT INTO Traffic_Mapquest (Zipcode,Latitude,Longitude,Severity,Short_descrip,Address,County,State) VALUES (?,?,?,?,?,?,?,?)") or die "Couldn't prepare statemenent: " . $dbh->errstr;
 					$sth->execute($zipcode,$lat,$long,$severity,$shortDes,$street,$county,$state) or die "Couldn't execute statement: " . $sth->errstr;
 				}
 				
 				#for debug purpose to view only 1 incident
 				#last;
 			}
-			print "Success\n";
+			#print "Success\n";
+			$dbh->disconnect;
 		}
 		else {
 			print $response->status_line. " Fail\n";
