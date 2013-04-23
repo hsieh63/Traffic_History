@@ -12,7 +12,8 @@ function mapTrafficPoints($zipcode, $time, $weather) {
     $pattern = '/0(d+)/i';
     $replacement = '$1';
     $zipcode = preg_replace($pattern,$replacement,$zipcode);
-    $con = mysqli_connect("fdb4.biz.nf","1270538_traffic","Software2013","1270538_traffic");
+    //$con = mysqli_connect("fdb4.biz.nf","1270538_traffic","Software2013","1270538_traffic");
+    $con = mysqli_connect("localhost","traffich_Admin","Admin2013","traffich_main");
 
     if (mysqli_connect_errno($con))
     {
@@ -37,7 +38,7 @@ function mapTrafficPoints($zipcode, $time, $weather) {
     }
     else {
         $resultArray[0] = 1;
-    }
+   } 
     
     $result->close();
     mysqli_close($con);

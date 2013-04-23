@@ -36,7 +36,7 @@
             <tr>
                 <td>04/02</td>
                 <td> First demo</td>
-                <td>Not completed yet</td>
+                <td>Done</td>
             <tr>
                 <td>05/07</td>
                 <td> Third report</td>
