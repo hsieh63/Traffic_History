@@ -4,13 +4,9 @@ use DBI;
 use strict;
 
 #change databaseName to actual database name
-#my $dataSource = 'DBI:mysql:traffich_main';
-#my $dbUser = 'traffic_admin';
-#my $dbPass = 'Admin2013';
-
-my $dataSource = 'DBI:mysql:trafficHistoryDev';
-my $dbUser = 'Q6600\kev';
-my $dbPass = 'gameboy';
+my $dataSource = 'DBI:mysql:traffich_main';
+my $dbUser = 'traffic_admin';
+my $dbPass = 'Admin2013';
 
 my $dbh = DBI->connect($dataSource,$dbUser,$dbPass) or die "Counldn't connect to database: " . DBI->errstr;
 
