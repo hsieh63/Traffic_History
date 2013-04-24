@@ -52,16 +52,12 @@ foreach my $number ( sort keys %boundingBox ) {
 	if ( ( $number % 2 ) == 0 ) {
 		my $ua = LWP::UserAgent->new;    #creates user agent to get http
 
-		my $url = 'http://www.mapquestapi.com/traffic/v1/incidents?key=Fmjtd%7Cluub2168nu%2Cax%3Do5-96zg9u&boundingBox=$firstBBLat,$firstBBLong,$secondBBLat,$secondBBLong&filters=construction,incidents&inFormat=kvp&outFormat=json'
-		  ;                              #sets up url, this needs to be dynamic
+		my $url = "http://www.mapquestapi.com/traffic/v1/incidents?key=Fmjtd%7Cluub2168nu%2Cax%3Do5-96zg9u&boundingBox=".$firstBBLat.",".$firstBBLong.",".$secondBBLat.",".$secondBBLong."&filters=construction,incidents&inFormat=kvp&outFormat=json";
+		#sets up url, this needs to be dynamic
 
 		my $req = HTTP::Request->new( POST => $url );    #requesting url
 		my $jsonResponse = JSON->new;                    #initilize json object
 		my $response     = $ua->request($req);           #get response to url?
-		     #my $textResponse = $response->content;
-		  #$textResponse =~ m/^handleIncidentsResponse\((.*)\);$/g; #set content which is a json into json object
-		  #$jsonResponse = $1;
-		  #print $jsonResponse . "\n";
 		$jsonResponse = $response->content;
 		my $hashRef =
 		  decode_json $jsonResponse; #decode json using module and gets a hash reference number
@@ -89,7 +85,6 @@ foreach my $number ( sort keys %boundingBox ) {
 			my ( $long, $lat ) = 0;
 			my ( $zipcode, $severity, $street, $county, $state, $shortDes );
 
-			#print %{@{$hash{'incidents'}}[2]};
 			my @arrayIncidents = @{ $hash{incidents} };
 			if (@arrayIncidents) {
 				foreach (@arrayIncidents) {
@@ -100,12 +95,9 @@ foreach my $number ( sort keys %boundingBox ) {
 					$severity = $hashNest{severity};
 					$shortDes = $hashNest{shortDesc};
 
-					#foreach my $key2(keys %hashNest) {
-					#	#print "key: $key2, value: " . $hashNest{$key2} . "\n";
-					#	#keys: lat, lng, severity?,fullDesc,shortDesc, others????
-					#}
 					my $geoUrl =
 "http://www.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd|luub2168nu%2Cax%3Do5-96zg9u&json={location:{latLng:{lat:$lat,lng:$long}}}";
+
 					my $reqGeo =
 					  HTTP::Request->new( POST => $geoUrl );    #requesting url
 					my $jsonResponseGeo = JSON->new;    #initilize json object
@@ -178,7 +170,7 @@ foreach my $number ( sort keys %boundingBox ) {
 #		}
 #	}
 #}
-						print "Geo Success\n";
+						#print "Geo Success\n";
 					}
 					else {
 						print $response->status_line . " Fail\n";
@@ -187,15 +179,6 @@ foreach my $number ( sort keys %boundingBox ) {
 					#need to add error checking so not inserting bad data
 					#here we should've put all necessary values into variables
 					#put insert into database here
-
-#STILL TO BE IMPLEMENTED - Prepare the query and execute it, adding a new incident row to our database
-#if the query handle is not yet defined, define it here (prevents the overhead of defining it in every loop)
-#	if(! defined $query_handle) {
-#	$query_handle = $dbh->prepare($SQLinsert)
-#		or die "Couldn't prepare statement: " . $dbh->errstr;
-#	}
-#execute the query handle - STILL TO BE IMPLEMENTED
-#executes the SQL query defined by the handle and stores the given variables in the database using the DBI
 
 					if ( $stateFlag == 0 ) {
 						$sth->execute( $zipcode, $lat, $long, $severity,
