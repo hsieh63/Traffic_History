@@ -26,357 +26,374 @@ my $dbh = DBI->connect( $dataSource, $dbUser, $dbPass )
 #to prepare statements
 #pull data out of traffic incident table(street,long,lat,zipcode)
 #also should only pull out for the previous day or something depending on how the script is run
-my $sth = $dbh->prepare("")
-  or die "Couldn't prepare statemenent: " . $dbh->errstr;
-my $sth2 = $dbh->prepare("")
-  or die "Couldn't prepare statemenent: " . $dbh->errstr;
+my $sth = $dbh->prepare(
+"SELECT tm.Zipcode,tm.Date_Time,tm.Latitude,tm.Longitude,tm.Severity,tm.Address,w.Weather FROM Traffic_Mapquest as tm, Weather as w,Zip_Cdoes as zc WHERE DATE(Date_Time) = CURDATE() and w.Zipcode = zc.Zipcode and tm.County = zc.County and DATE(Timestamp) = CURDATE()"
+) or die "Couldn't prepare statemenent: " . $dbh->errstr;
+my $sth2 = $dbh->prepare(
+"SELECT td.Zipcode,td.Date_Time,td.Latitude,td.Longitude,td.Severity,td.Address,w.Weather FROM Traffic_Display as td, Weather as w,Zip_Cdoes as zc WHERE DATE(Date_Time) = CURDATE() and w.Zipcode = zc.Zipcode and td.County = zc.County and DATE(Timestamp) = CURDATE()"
+) or die "Couldn't prepare statemenent: " . $dbh->errstr;
 $sth->execute() or die "Couldn't execute statement: " . $sth->errstr;
 my $gatheredPoints = {};
 my $displayPoints  = {};
-while ( my $rowHash = $sth->retchrow_arrayref() ) {
-	$rowHash->("time") =~ m/(\d+):.*/;
+while ( my $rowHash = $sth->fetchrow_hashref() ) {
+	$rowHash->{"Date_Time"} =~ m/\d+-\d+-\d+ (\d+):.*/;
 	my $hour = $1;
 	if ( $hour == 12 || $hour == 1 || $hour == 2 ) {
 		if (
-			exists $gatheredPoints->{ $rowHash->("Weather") }
-			->{ $rowHash->("Weather") }->{'0'}->{ $rowHash->("Address") }
-			->{ $rowHash->("Longitude") }->{ $rowHash->("Latitude") } )
+			exists $gatheredPoints->{ $rowHash->{"Weather"} }->{'0'}
+			->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			->{ $rowHash->{"Latitude"} } )
 		{
 			my $temp =
-			  $gatheredPoints->{ $rowHash->("Weather") }
-			  ->{ $rowHash->("Weather") }->{'0'}->{ $rowHash->("Address") }
-			  ->{ $rowHash->("Longitude") }->{ $rowHash->("Latitude") };
-			$temp = $temp + $rowHash->("Severity");
-			$gatheredPoints->{ $rowHash->("Weather") }
-			  ->{ $rowHash->("Weather") }->{'0'}->{ $rowHash->("Address") }
-			  ->{ $rowHash->("Longitude") }->{ $rowHash->("Latitude") } = $temp;
+			  $gatheredPoints->{ $rowHash->{"Weather"} }->{'0'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} }[0];
+			$temp = $temp + $rowHash->{"Severity"};
+			$gatheredPoints->{ $rowHash->{"Weather"} }->{'0'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } = $temp;
 		}
 		else {
-			$gatheredPoints->{ $rowHash->("Weather") }
-			  ->{ $rowHash->("Weather") }->{'0'}->{ $rowHash->("Adress") }
-			  ->{ $rowHash->("Longitude") }->{ $rowHash->("Latitude") } =
-			  $rowHash->{"Severity"};
+			$gatheredPoints->{ $rowHash->{"Weather"} }->{'0'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } =
+			  [ $rowHash->{"Severity"}, $rowHash->{"Zipcode"} ];
 		}
 	}
 	elsif ( $hour == 3 || $hour == 4 || $hour == 5 ) {
 		if (
-			exists $gatheredPoints->{ $rowHash->("Weather") }->{'1'}
-			->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			->{ $rowHash->("Latitude") } )
+			exists $gatheredPoints->{ $rowHash->{"Weather"} }->{'1'}
+			->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			->{ $rowHash->{"Latitude"} } )
 		{
 			my $temp =
-			  $gatheredPoints->{ $rowHash->("Weather") }->{'1'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") };
-			$temp = $temp + $rowHash->("Severity");
-			$gatheredPoints->{ $rowHash->("Weather") }->{'1'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $temp;
+			  $gatheredPoints->{ $rowHash->{"Weather"} }->{'1'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} }[0];
+			$temp = $temp + $rowHash->{"Severity"};
+			$gatheredPoints->{ $rowHash->{"Weather"} }->{'1'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } = $temp;
 		}
 		else {
-			$gatheredPoints->{ $rowHash->("Weather") }->{'1'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $rowHash->{"Severity"};
+			$gatheredPoints->{ $rowHash->{"Weather"} }->{'1'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } =
+			  [ $rowHash->{"Severity"}, $rowHash->{"Zipcode"} ];
 		}
 	}
 	elsif ( $hour == 6 || $hour == 7 || $hour == 8 ) {
 		if (
-			exists $gatheredPoints->{ $rowHash->("Weather") }->{'2'}
-			->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			->{ $rowHash->("Latitude") } )
+			exists $gatheredPoints->{ $rowHash->{"Weather"} }->{'2'}
+			->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			->{ $rowHash->{"Latitude"} } )
 		{
 			my $temp =
-			  $gatheredPoints->{ $rowHash->("Weather") }->{'2'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") };
-			$temp = $temp + $rowHash->("Severity");
-			$gatheredPoints->{ $rowHash->("Weather") }->{'2'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $temp;
+			  $gatheredPoints->{ $rowHash->{"Weather"} }->{'2'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} }[0];
+			$temp = $temp + $rowHash->{"Severity"};
+			$gatheredPoints->{ $rowHash->{"Weather"} }->{'2'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } = $temp;
 		}
 		else {
-			$gatheredPoints->{ $rowHash->("Weather") }->{'2'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $rowHash->{"Severity"};
+			$gatheredPoints->{ $rowHash->{"Weather"} }->{'2'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } =
+			  [ $rowHash->{"Severity"}, $rowHash->{"Zipcode"} ];
 		}
 	}
 	elsif ( $hour == 9 || $hour == 10 || $hour == 11 ) {
 		if (
-			exists $gatheredPoints->{ $rowHash->("Weather") }->{'3'}
-			->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			->{ $rowHash->("Latitude") } )
+			exists $gatheredPoints->{ $rowHash->{"Weather"} }->{'3'}
+			->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			->{ $rowHash->{"Latitude"} } )
 		{
 			my $temp =
-			  $gatheredPoints->{ $rowHash->("Weather") }->{'3'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") };
-			$temp = $temp + $rowHash->("Severity");
-			$gatheredPoints->{ $rowHash->("Weather") }->{'3'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $temp;
+			  $gatheredPoints->{ $rowHash->{"Weather"} }->{'3'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} }[0];
+			$temp = $temp + $rowHash->{"Severity"};
+			$gatheredPoints->{ $rowHash->{"Weather"} }->{'3'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } = $temp;
 		}
 		else {
-			$gatheredPoints->{ $rowHash->("Weather") }->{'3'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $rowHash->{"Severity"};
+			$gatheredPoints->{ $rowHash->{"Weather"} }->{'3'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } =
+			  [ $rowHash->{"Severity"}, $rowHash->{"Zipcode"} ];
 		}
 	}
 	elsif ( $hour == 12 || $hour == 13 || $hour == 14 ) {
 		if (
-			exists $gatheredPoints->{ $rowHash->("Weather") }->{'4'}
-			->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			->{ $rowHash->("Latitude") } )
+			exists $gatheredPoints->{ $rowHash->{"Weather"} }->{'4'}
+			->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			->{ $rowHash->{"Latitude"} } )
 		{
 			my $temp =
-			  $gatheredPoints->{ $rowHash->("Weather") }->{'4'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") };
-			$temp = $temp + $rowHash->("Severity");
-			$gatheredPoints->{ $rowHash->("Weather") }->{'4'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $temp;
+			  $gatheredPoints->{ $rowHash->{"Weather"} }->{'4'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} }[0];
+			$temp = $temp + $rowHash->{"Severity"};
+			$gatheredPoints->{ $rowHash->{"Weather"} }->{'4'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } = $temp;
 		}
 		else {
-			$gatheredPoints->{ $rowHash->("Weather") }->{'4'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $rowHash->{"Severity"};
+			$gatheredPoints->{ $rowHash->{"Weather"} }->{'4'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } =
+			  [ $rowHash->{"Severity"}, $rowHash->{"Zipcode"} ];
 		}
 	}
 	elsif ( $hour == 15 || $hour == 16 || $hour == 17 ) {
 		if (
-			exists $gatheredPoints->{ $rowHash->("Weather") }->{'5'}
-			->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			->{ $rowHash->("Latitude") } )
+			exists $gatheredPoints->{ $rowHash->{"Weather"} }->{'5'}
+			->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			->{ $rowHash->{"Latitude"} } )
 		{
 			my $temp =
-			  $gatheredPoints->{ $rowHash->("Weather") }->{'5'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") };
-			$temp = $temp + $rowHash->("Severity");
-			$gatheredPoints->{ $rowHash->("Weather") }->{'5'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $temp;
+			  $gatheredPoints->{ $rowHash->{"Weather"} }->{'5'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} }[0];
+			$temp = $temp + $rowHash->{"Severity"};
+			$gatheredPoints->{ $rowHash->{"Weather"} }->{'5'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } = $temp;
 		}
 		else {
-			$gatheredPoints->{ $rowHash->("Weather") }->{'5'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $rowHash->{"Severity"};
+			$gatheredPoints->{ $rowHash->{"Weather"} }->{'5'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } =
+			  [ $rowHash->{"Severity"}, $rowHash->{"Zipcode"} ];
 		}
 	}
 	elsif ( $hour == 18 || $hour == 19 || $hour == 20 ) {
 		if (
-			exists $gatheredPoints->{ $rowHash->("Weather") }->{'6'}
-			->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			->{ $rowHash->("Latitude") } )
+			exists $gatheredPoints->{ $rowHash->{"Weather"} }->{'6'}
+			->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			->{ $rowHash->{"Latitude"} } )
 		{
 			my $temp =
-			  $gatheredPoints->{ $rowHash->("Weather") }->{'6'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") };
-			$temp = $temp + $rowHash->("Severity");
-			$gatheredPoints->{ $rowHash->("Weather") }->{'6'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $temp;
+			  $gatheredPoints->{ $rowHash->{"Weather"} }->{'6'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} }[0];
+			$temp = $temp + $rowHash->{"Severity"};
+			$gatheredPoints->{ $rowHash->{"Weather"} }->{'6'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } = $temp;
 		}
 		else {
-			$gatheredPoints->{ $rowHash->("Weather") }->{'6'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $rowHash->{"Severity"};
+			$gatheredPoints->{ $rowHash->{"Weather"} }->{'6'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } =
+			  [ $rowHash->{"Severity"}, $rowHash->{"Zipcode"} ];
 		}
 	}
 	elsif ( $hour == 21 || $hour == 22 || $hour == 23 ) {
 		if (
-			exists $gatheredPoints->{ $rowHash->("Weather") }->{'7'}
-			->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			->{ $rowHash->("Latitude") } )
+			exists $gatheredPoints->{ $rowHash->{"Weather"} }->{'7'}
+			->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			->{ $rowHash->{"Latitude"} } )
 		{
 			my $temp =
-			  $gatheredPoints->{ $rowHash->("Weather") }->{'7'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") };
-			$temp = $temp + $rowHash->("Severity");
-			$gatheredPoints->{ $rowHash->("Weather") }->{'7'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $temp;
+			  $gatheredPoints->{ $rowHash->{"Weather"} }->{'7'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} }[0];
+			$temp = $temp + $rowHash->{"Severity"};
+			$gatheredPoints->{ $rowHash->{"Weather"} }->{'7'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } = $temp;
 		}
 		else {
-			$gatheredPoints->{ $rowHash->("Weather") }->{'7'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $rowHash->{"Severity"};
+			$gatheredPoints->{ $rowHash->{"Weather"} }->{'7'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } =
+			  [ $rowHash->{"Severity"}, $rowHash->{"Zipcode"} ];
 		}
 	}
 }
 
-$sth2->execute() or die "Couldn't execute statement: " . $sth2->errstr;
-while ( my $rowHash = $sth2->retchrow_arrayref() ) {
-	$rowHash->("time") =~ m/(\d+):.*/;
+$sth2->execute() or die "Couldn't execute statement: " . $sth->errstr;
+while ( my $rowHash = $sth2->fetchrow_hashref() ) {
+	$rowHash->{"Date_Time"} =~ m/\d+-\d+-\d+ (\d+):.*/;
 	my $hour = $1;
 	if ( $hour == 12 || $hour == 1 || $hour == 2 ) {
 		if (
-			exists $displayPoints->{ $rowHash->("Weather") }->{'0'}
-			->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			->{ $rowHash->("Latitude") } )
+			exists $displayPoints->{ $rowHash->{"Weather"} }->{'0'}
+			->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			->{ $rowHash->{"Latitude"} } )
 		{
 			my $temp =
-			  $displayPoints->{ $rowHash->("Weather") }->{'0'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") };
-			$temp = $temp + $rowHash->("Severity");
-			$displayPoints->{ $rowHash->("Weather") }->{'0'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $temp;
+			  $displayPoints->{ $rowHash->{"Weather"} }->{'0'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} }[0];
+			$temp = $temp + $rowHash->{"Severity"};
+			$displayPoints->{ $rowHash->{"Weather"} }->{'0'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } = $temp;
 		}
 		else {
-			$displayPoints->{ $rowHash->("Weather") }->{'0'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $rowHash->{"Severity"};
+			$displayPoints->{ $rowHash->{"Weather"} }->{'0'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } =
+			  [ $rowHash->{"Severity"}, $rowHash->{"Zipcode"} ];
 		}
 	}
 	elsif ( $hour == 3 || $hour == 4 || $hour == 5 ) {
 		if (
-			exists $displayPoints->{ $rowHash->("Weather") }->{'1'}
-			->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			->{ $rowHash->("Latitude") } )
+			exists $displayPoints->{ $rowHash->{"Weather"} }->{'1'}
+			->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			->{ $rowHash->{"Latitude"} } )
 		{
 			my $temp =
-			  $displayPoints->{ $rowHash->("Weather") }->{'1'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") };
-			$temp = $temp + $rowHash->("Severity");
-			$displayPoints->{ $rowHash->("Weather") }->{'1'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $temp;
+			  $displayPoints->{ $rowHash->{"Weather"} }->{'1'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} }[0];
+			$temp = $temp + $rowHash->{"Severity"};
+			$displayPoints->{ $rowHash->{"Weather"} }->{'1'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } = $temp;
 		}
 		else {
-			$displayPoints->{ $rowHash->("Weather") }->{'1'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $rowHash->{"Severity"};
+			$displayPoints->{ $rowHash->{"Weather"} }->{'1'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } =
+			  [ $rowHash->{"Severity"}, $rowHash->{"Zipcode"} ];
 		}
 	}
 	elsif ( $hour == 6 || $hour == 7 || $hour == 8 ) {
 		if (
-			exists $displayPoints->{ $rowHash->("Weather") }->{'2'}
-			->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			->{ $rowHash->("Latitude") } )
+			exists $displayPoints->{ $rowHash->{"Weather"} }->{'2'}
+			->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			->{ $rowHash->{"Latitude"} } )
 		{
 			my $temp =
-			  $displayPoints->{ $rowHash->("Weather") }->{'2'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") };
-			$temp = $temp + $rowHash->("Severity");
-			$displayPoints->{ $rowHash->("Weather") }->{'2'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $temp;
+			  $displayPoints->{ $rowHash->{"Weather"} }->{'2'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} }[0];
+			$temp = $temp + $rowHash->{"Severity"};
+			$displayPoints->{ $rowHash->{"Weather"} }->{'2'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } = $temp;
 		}
 		else {
-			$displayPoints->{ $rowHash->("Weather") }->{'2'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $rowHash->{"Severity"};
+			$displayPoints->{ $rowHash->{"Weather"} }->{'2'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } =
+			  [ $rowHash->{"Severity"}, $rowHash->{"Zipcode"} ];
 		}
 	}
 	elsif ( $hour == 9 || $hour == 10 || $hour == 11 ) {
 		if (
-			exists $displayPoints->{ $rowHash->("Weather") }->{'3'}
-			->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			->{ $rowHash->("Latitude") } )
+			exists $displayPoints->{ $rowHash->{"Weather"} }->{'3'}
+			->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			->{ $rowHash->{"Latitude"} } )
 		{
 			my $temp =
-			  $displayPoints->{ $rowHash->("Weather") }->{'3'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") };
-			$temp = $temp + $rowHash->("Severity");
-			$displayPoints->{ $rowHash->("Weather") }->{'3'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $temp;
+			  $displayPoints->{ $rowHash->{"Weather"} }->{'3'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} }[0];
+			$temp = $temp + $rowHash->{"Severity"};
+			$displayPoints->{ $rowHash->{"Weather"} }->{'3'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } = $temp;
 		}
 		else {
-			$displayPoints->{ $rowHash->("Weather") }->{'3'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $rowHash->{"Severity"};
+			$displayPoints->{ $rowHash->{"Weather"} }->{'3'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } =
+			  [ $rowHash->{"Severity"}, $rowHash->{"Zipcode"} ];
 		}
 	}
 	elsif ( $hour == 12 || $hour == 13 || $hour == 14 ) {
 		if (
-			exists $displayPoints->{ $rowHash->("Weather") }->{'4'}
-			->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			->{ $rowHash->("Latitude") } )
+			exists $displayPoints->{ $rowHash->{"Weather"} }->{'4'}
+			->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			->{ $rowHash->{"Latitude"} } )
 		{
 			my $temp =
-			  $displayPoints->{ $rowHash->("Weather") }->{'4'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") };
-			$temp = $temp + $rowHash->("Severity");
-			$displayPoints->{ $rowHash->("Weather") }->{'4'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $temp;
+			  $displayPoints->{ $rowHash->{"Weather"} }->{'4'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} }[0];
+			$temp = $temp + $rowHash->{"Severity"};
+			$displayPoints->{ $rowHash->{"Weather"} }->{'4'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } = $temp;
 		}
 		else {
-			$displayPoints->{ $rowHash->("Weather") }->{'4'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $rowHash->{"Severity"};
+			$displayPoints->{ $rowHash->{"Weather"} }->{'4'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } =
+			  [ $rowHash->{"Severity"}, $rowHash->{"Zipcode"} ];
 		}
 	}
 	elsif ( $hour == 15 || $hour == 16 || $hour == 17 ) {
 		if (
-			exists $displayPoints->{ $rowHash->("Weather") }->{'5'}
-			->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			->{ $rowHash->("Latitude") } )
+			exists $displayPoints->{ $rowHash->{"Weather"} }->{'5'}
+			->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			->{ $rowHash->{"Latitude"} } )
 		{
 			my $temp =
-			  $displayPoints->{ $rowHash->("Weather") }->{'5'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") };
-			$temp = $temp + $rowHash->("Severity");
-			$displayPoints->{ $rowHash->("Weather") }->{'5'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $temp;
+			  $displayPoints->{ $rowHash->{"Weather"} }->{'5'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} }[0];
+			$temp = $temp + $rowHash->{"Severity"};
+			$displayPoints->{ $rowHash->{"Weather"} }->{'5'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } = $temp;
 		}
 		else {
-			$displayPoints->{ $rowHash->("Weather") }->{'5'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $rowHash->{"Severity"};
+			$displayPoints->{ $rowHash->{"Weather"} }->{'5'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } =
+			  [ $rowHash->{"Severity"}, $rowHash->{"Zipcode"} ];
 		}
 	}
 	elsif ( $hour == 18 || $hour == 19 || $hour == 20 ) {
 		if (
-			exists $displayPoints->{ $rowHash->("Weather") }->{'6'}
-			->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			->{ $rowHash->("Latitude") } )
+			exists $displayPoints->{ $rowHash->{"Weather"} }->{'6'}
+			->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			->{ $rowHash->{"Latitude"} } )
 		{
 			my $temp =
-			  $displayPoints->{ $rowHash->("Weather") }->{'6'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") };
-			$temp = $temp + $rowHash->("Severity");
-			$displayPoints->{ $rowHash->("Weather") }->{'6'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $temp;
+			  $displayPoints->{ $rowHash->{"Weather"} }->{'6'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} }[0];
+			$temp = $temp + $rowHash->{"Severity"};
+			$displayPoints->{ $rowHash->{"Weather"} }->{'6'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } = $temp;
 		}
 		else {
-			$displayPoints->{ $rowHash->("Weather") }->{'6'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $rowHash->{"Severity"};
+			$displayPoints->{ $rowHash->{"Weather"} }->{'6'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } =
+			  [ $rowHash->{"Severity"}, $rowHash->{"Zipcode"} ];
 		}
 	}
 	elsif ( $hour == 21 || $hour == 22 || $hour == 23 ) {
 		if (
-			exists $displayPoints->{ $rowHash->("Weather") }->{'7'}
-			->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			->{ $rowHash->("Latitude") } )
+			exists $displayPoints->{ $rowHash->{"Weather"} }->{'7'}
+			->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			->{ $rowHash->{"Latitude"} } )
 		{
 			my $temp =
-			  $displayPoints->{ $rowHash->("Weather") }->{'7'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") };
-			$temp = $temp + $rowHash->("Severity");
-			$displayPoints->{ $rowHash->("Weather") }->{'7'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $temp;
+			  $displayPoints->{ $rowHash->{"Weather"} }->{'7'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} }[0];
+			$temp = $temp + $rowHash->{"Severity"};
+			$displayPoints->{ $rowHash->{"Weather"} }->{'7'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } = $temp;
 		}
 		else {
-			$displayPoints->{ $rowHash->("Weather") }->{'7'}
-			  ->{ $rowHash->("Adress") }->{ $rowHash->("Longitude") }
-			  ->{ $rowHash->("Latitude") } = $rowHash->{"Severity"};
+			$displayPoints->{ $rowHash->{"Weather"} }->{'7'}
+			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
+			  ->{ $rowHash->{"Latitude"} } =
+			  [ $rowHash->{"Severity"}, $rowHash->{"Zipcode"} ];
 		}
 	}
 }
@@ -384,9 +401,12 @@ while ( my $rowHash = $sth2->retchrow_arrayref() ) {
 my %gatheredPointsHash = %$gatheredPoints;
 my %displayPointsHash  = %$displayPoints;
 
+#hash->weather->time->zipcode->street/Address->longitude->latitude = severity
 foreach my $time ( sort keys %gatheredPointsHash ) {
 	foreach my $weather ( sort keys %{ $gatheredPointsHash{$time} } ) {
-		foreach my $address ( sort keys %{ $gatheredPointsHash{$time}{$weather} } ) {
+		foreach
+		  my $address ( sort keys %{ $gatheredPointsHash{$time}{$weather} } )
+		{
 			my $displayRef;
 			my $displayFlag = 0;
 			if ( exists $displayPointsHash{$time}{$weather}{$address} ) {
@@ -395,23 +415,30 @@ foreach my $time ( sort keys %gatheredPointsHash ) {
 			else {
 				$displayFlag = 1;
 			}
-			foreach
-			  my $long ( sort keys %{ $gatheredPointsHash{$time}{$weather}{$address} } )
+			foreach my $long (
+				sort
+				keys %{ $gatheredPointsHash{$time}{$weather}{$address} }
+			  )
 			{
 				foreach my $lat (
-					sort keys %{ $gatheredPointsHash{$time}{$weather}{$address}{$long} } )
+					sort keys
+					%{ $gatheredPointsHash{$time}{$weather}{$address}{$long} } )
 				{
 					if ( $displayFlag == 1 ) {
-						$displayPointsHash{$time}{$weather}{$address}{$long}{$lat} =
-						  $gatheredPointsHash{$time}{$weather}{$address}{$long}{$lat};
+						$displayPointsHash{$time}{$weather}{$address}{$long}
+						  {$lat} =
+						  $gatheredPointsHash{$time}{$weather}{$address}{$long}
+						  {$lat};
 						$displayFlag = 0;
-						$displayRef  = $displayPointsHash{$time}{$weather}{$address};
+						$displayRef =
+						  $displayPointsHash{$time}{$weather}{$address};
 						last;
 					}
 					else {
-						my ( $compareDistance, $inputLat, $inputLong );
-						my $distanceFlag = 0;
-						my $nearbyFlag   = 0;
+						my ( $inputLat, $inputLong );
+						my $distanceFlag    = 0;
+						my $nearbyFlag      = 0;
+						my $compareDistance = 0;
 						foreach my $displayLong ( sort keys %{$displayRef} ) {
 							foreach my $displayLat (
 								sort keys %{ $displayRef->{$displayLong} } )
@@ -440,28 +467,33 @@ foreach my $time ( sort keys %gatheredPointsHash ) {
 								my $distanceKm = $theta * 6372.7976;
 
 								#from km  to miles
-								my $distanceMi = $distanceKm / 1.60934;
+								my $distanceMi = $distanceKm * 0.62137;
 								if ( $distanceMi < .5 ) {
 									if (   $distanceMi < $compareDistance
 										|| $distanceFlag == 0 )
 									{
-										$distanceFlag    = 1;
-										$nearbyFlag      = 1;
-										$inputLat        = $displayLat;
-										$inputLong       = $displayLong;
+										$distanceFlag = 1;
+										$nearbyFlag++;
+										$inputLat     = $displayLat;
+										$inputLong    = $displayLong;
 										$compareDistance = $distanceMi;
 									}
 								}
 							}
 						}
-						if ( $nearbyFlag == 0 ) {
+						if ( $nearbyFlag == 1 ) {
 							$displayRef->{$long}->{$lat} =
-							  $gatheredPointsHash{$time}{$weather}{$address}{$long}{$lat};
+							  $gatheredPointsHash{$time}{$weather}{$address}
+							  {$long}{$lat};
+						}
+						elsif ($nearbyFlag == 0) {
+							warn "Problem nearby flag is zero, nothing is compared\n";
 						}
 						else {
 							$displayRef->{$inputLong}->{$inputLat} =
 							  $displayRef->{$inputLong}->{$inputLat} +
-							  $gatheredPointsHash{$time}{$weather}{$address}{$long}{$lat};
+							  $gatheredPointsHash{$time}{$weather}{$address}
+							  {$long}{$lat};
 						}
 					}
 				}
@@ -475,13 +507,28 @@ foreach my $time ( sort keys %gatheredPointsHash ) {
 #perform distance check
 #then either add to point in display hash or create new point in display hash
 #then push display hash back into database
-$sth = $dbh->prepare("") or die "Couldn't prepare statemenent: " . $dbh->errstr;
+$sth = $dbh->prepare(
+"INSERT INTO Traffic_Display (Zipcode,Latitude,Longitude,Severity,Address,Weather,Time) VALUES (?,?,?,?,?,?,,?)"
+) or die "Couldn't prepare statemenent: " . $dbh->errstr;
 foreach my $time ( sort keys %displayPointsHash ) {
-	foreach my $weather (sort keys %{$displayPointsHash{$time}}) {
-		foreach my $address ( sort keys %{$displayPointsHash{$time}{$weather}} ) {
-			foreach my $long ( sort keys %{$displayPointsHash{$time}{$weather}{$address}} ) {
-				foreach my $lat ( sort keys %{$displayPointsHash{$time}{$weather}{$address}{$long}} ) {
-					$sth->execute()
+	foreach my $weather ( sort keys %{ $displayPointsHash{$time} } ) {
+		foreach my $address (
+			sort
+			keys %{ $displayPointsHash{$time}{$weather} }
+		  )
+		{
+			foreach my $long (
+				sort keys %{ $displayPointsHash{$time}{$weather}{$address} } )
+			{
+				foreach my $lat (
+					sort keys
+					%{ $displayPointsHash{$time}{$weather}{$address}{$long} } )
+				{
+					my @array =
+					  $displayPointsHash{$time}{$weather}{$address}{$long}
+					  {$lat};
+					$sth->execute( $array[1], $lat, $long, $array[0], $address,
+						$weather, $time )
 					  or die "Couldn't execute statement: " . $sth->errstr;
 				}
 			}
