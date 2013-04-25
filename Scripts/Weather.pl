@@ -15,13 +15,13 @@ use DBI;
 #Config variables - for now, can only compile on Kevin's local computer 
 my $dsn = "localDSN"; 			  #Data Source Name - 'localDSN' is specific to Kevin's computer
 my $host = 'Q6600\Q6600MSSQL';		#change to server name
-my $database = 'trafficHistory';  #change to database name
-my $user = 'Q6600\kev';				#database user name
-my $auth = 'password';				#user password
+my $database = 'DBI:mysql:traffich_main';  #change to database name
+my $user = 'traffich_admin';				#database user name
+my $auth = 'Admin2013';				#user password
 
 #Use DBD::OBDC module to connect to SQL database 
 #Currently uses a local DSN, this can be changed to connect to a different database
-my $dbh = DBI->connect('DBI:ODBC:localDSN',	
+my $dbh = DBI->connect($database,	
 			$user,
 			$auth,  
 			) || die "Database connection not made: $DBI::errstr";
@@ -136,7 +136,7 @@ sub getWeather(){
 				}
 				if ($hour == 9 or $hour == 10 or $hour == 11){
 					return 3;
-				}			
+				}
 			}
 			
 			#Returns an integer from 4-7 if the period is PM
