@@ -16,6 +16,14 @@ use LWP::UserAgent;
 use HTTP::Request;
 use JSON;
 use DBI;
+use DateTime;
+
+my $dt = DateTime->now();
+
+my $file = "log\\" . $dt->mdy() . ".txt";
+
+open FILE ,">>$file" or die "can't open $file: $!";
+print FILE $dt->hms() . "\n";
 
 #my @highwayArray = ("Route","RT","CR","I-","US","Turnpike","NJTP","Parkway","Pkwy");
 my %boundingBox = (
@@ -37,6 +45,17 @@ my %boundingBox = (
         25 => { 40.450196 => -72.034044, },
         );
 my ( $firstBBLat, $firstBBLong, $secondBBLat, $secondBBLong );
+#Database Implementation - Connect to database using DBI
+#Config variables - for now, can only compile on Kevin's local computer
+my $dataSource = 'DBI:mysql:traffich_main';
+my $dbUser     = 'traffich_admin';
+my $dbPass     = 'Admin2013';
+
+my $dbh = DBI->connect( $dataSource, $dbUser, $dbPass ) or die print FILE "Counldn't connect to database: " . DBI->errstr;
+my $sth = $dbh->prepare("INSERT INTO Traffic_Mapquest (Zipcode,Latitude,Longitude,Severity,Short_descrip,Address,County,State) VALUES (?,?,?,?,?,?,?,?)") or die print FILE "Couldn't prepare statemenent: " . $dbh->errstr;
+
+#user prepare statement and use the execute later when insertion is needed
+
 foreach my $number ( sort keys %boundingBox ) {
     my %nestedBB = %{ $boundingBox{$number} };
     foreach my $BBLat ( sort keys %nestedBB ) {
@@ -55,6 +74,7 @@ foreach my $number ( sort keys %boundingBox ) {
         #printf("%f,%f,%f,%f\n",$firstBBLat,$firstBBLong,$secondBBLat,$secondBBLong);
 
         my $url = "http://www.mapquestapi.com/traffic/v1/incidents?key=Fmjtd%7Cluub2168nu%2Cax%3Do5-96zg9u&boundingBox=$firstBBLat,$firstBBLong,$secondBBLat,$secondBBLong&filters=construction,incidents&inFormat=kvp&outFormat=json";
+        print FILE "url : $url\n";
 #sets up url, this needs to be dynamic
 
         my $req = HTTP::Request->new( POST => $url );    #requesting url
@@ -65,17 +85,6 @@ foreach my $number ( sort keys %boundingBox ) {
         my %hash = %$hashRef;        #deference hash number to a hash
 
         if ( $response->is_success ) {
-
-#Database Implementation - Connect to database using DBI
-#Config variables - for now, can only compile on Kevin's local computer
-            my $dataSource = 'DBI:mysql:traffich_main';
-            my $dbUser     = 'traffich_admin';
-            my $dbPass     = 'Admin2013';
-
-            my $dbh = DBI->connect( $dataSource, $dbUser, $dbPass ) or die "Counldn't connect to database: " . DBI->errstr;
-            my $sth = $dbh->prepare("INSERT INTO Traffic_Mapquest (Zipcode,Latitude,Longitude,Severity,Short_descrip,Address,County,State) VALUES (?,?,?,?,?,?,?,?)") or die "Couldn't prepare statemenent: " . $dbh->errstr;
-
-#user prepare statement and use the execute later when insertion is needed
 
 #print $response->content;
 #loops through the return to get the long lat
@@ -94,6 +103,7 @@ foreach my $number ( sort keys %boundingBox ) {
                     $shortDes = $hashNest{shortDesc};
 
                     my $geoUrl = "http://www.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd|luub2168nu%2Cax%3Do5-96zg9u&json={location:{latLng:{lat:$lat,lng:$long}}}";
+                    print FILE "geo url: $geoUrl\n";
 
                     my $reqGeo =HTTP::Request->new( POST => $geoUrl );    #requesting url
                     my $jsonResponseGeo = JSON->new;    #initilize json object
@@ -163,25 +173,28 @@ foreach my $number ( sort keys %boundingBox ) {
 						#print "Geo Success\n";
                     }
                     else {
-                        print $response->status_line . " Fail\n";
+                        print FILE $response->status_line . " - Geo Fail\n";
                     }
 					
 					#need to add error checking so not inserting bad data
 					#here we should've put all necessary values into variables
 					#put insert into database here
                     if ( $stateFlag == 0 ) {
-                        $sth->execute( $zipcode, $lat, $long, $severity,$shortDes, $street, $county, $state ) or die "Couldn't execute statement: " . $sth->errstr;
+                    	print FILE "Zipcode: $zipcode\nLatitude: $lat\nLongitude: $long\nSeverity: $severity\nShort descripttion: $shortDes\nStreet: $street\nCounty: $county\nState: $state\n";
+                        $sth->execute( $zipcode, $lat, $long, $severity,$shortDes, $street, $county, $state ) or die print FILE "Couldn't execute statement: " . $sth->errstr;
                     }
 				
 				#for debug purpose to view only 1 incident
 				#last;
                 }
 				#print "Success\n";
-                $dbh->disconnect;
             }
         }
         else {
-            print $response->status_line . " Fail\n";
+            print FILE $response->status_line . " - Fail\n";
         }
     }
 }
+$dbh->disconnect;
+print FILE "Exiting script" . $dt->hms() . "\n";
+close(FILE);
