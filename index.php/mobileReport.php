@@ -12,12 +12,6 @@ if($_POST) {
     else {
         //error coding for empty zipcode
     }
-    if(isset($_POST['street'])) {
-        $street = $_POST['street'];
-    }
-    else {
-        //error coding for empty time
-    }
     if(isset($_POST['severity'])) {
         $severity = $_POST['severity'];
     }
