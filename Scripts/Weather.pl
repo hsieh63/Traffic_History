@@ -13,8 +13,6 @@ use JSON;
 use DBI;
 
 #Config variables - for now, can only compile on Kevin's local computer 
-my $dsn = "localDSN"; 			  #Data Source Name - 'localDSN' is specific to Kevin's computer
-my $host = 'Q6600\Q6600MSSQL';		#change to server name
 my $database = 'DBI:mysql:traffich_main';  #change to database name
 my $user = 'traffich_admin';				#database user name
 my $auth = 'Admin2013';				#user password
@@ -39,12 +37,6 @@ my $sth = $dbh->prepare($SQLreceive) or die "Couldn't prepare statement: $DBI->e
 $sth->execute() or die "Couldn't prepare statement: $DBI->errstr; stopped";
 
 # script will gather data at specific time intervals
-=begin
-while(true){
-	loopThroughZips();
-	sleep(60); #sleep for 60 seconds
-}	
-=cut
 
 #Loops through zip codes and accesses the getWeather function
 sub loopThroughZips(){
@@ -52,6 +44,7 @@ sub loopThroughZips(){
 	while ( my ($Zipcode) = $sth->fetchrow_arrayref() ) {
 		#execute function with parameter from database
 		getWeather($Zipcode);
+		sleep(7);
 	}
 }
 
@@ -62,34 +55,7 @@ sub getWeather(){
 	
 	#take Zip Code as the first and only parameter
 	my($zip) = $_[0];
-	
-	#comment out old code getting zipcodes from txt file
-	=begin comment
-	
-	if (open(FILE, "zipCodeTestFile.txt")) {
 		
-		open OUTPUT, ">getWeatherOutput.txt";
-		
-		while (<FILE>) {
-			
-			  $zip="$_";
-			  print "ZIP CODE: 0$_\n";
-			  print OUTPUT "ZIP CODE: 0$_\n";
-			  getInfo();
-			  print "\n\n";
-
-		}
-		print "\n";
-		close (FILE);
-		close OUTPUT;
-	} else {
-		print "Cannot open file!\n";
-	#	exit 1;
-	}
-	
-	=end comment 
-	=cut
-	
 	sub getInfo() {
 
 		# converts the data in the JSON object into a hash table
