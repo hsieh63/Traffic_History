@@ -13,7 +13,7 @@ function mapTrafficPoints($zipcode, $time, $weather) {
     $replacement = '$1';
     $zipcode = preg_replace($pattern,$replacement,$zipcode);
     //$con = mysqli_connect("fdb4.biz.nf","1270538_traffic","Software2013","1270538_traffic");
-    $con = mysqli_connect("localhost","traffich_Admin","Admin2013","traffich_main");
+    $con = mysqli_connect("localhost","traffich_admin","Admin2013","traffich_main");
 
     if (mysqli_connect_errno($con))
     {
@@ -43,5 +43,23 @@ function mapTrafficPoints($zipcode, $time, $weather) {
     $result->close();
     mysqli_close($con);
     return $resultArray;
+}
+
+function mobileReport($zipcode, $severity, $street, $county, $state, $shortDes, $lat, $long); {
+    /*  
+     */
+    
+    //Create connection
+    //mysqli_connect(host,username,password,dbname);
+    $con = mysqli_connect("localhost","traffich_admin","Admin2013","traffich_main");
+
+    if (mysqli_connect_errno($con))
+    {
+        echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    }
+    
+    mysqli_query($con,"INSERT INTO Traffic_Mobile (Zipcode,Latitude,Longitude,Severity,Short_descrip,Address,County,State) VALUES ($zipcode,$lat,$long,$severity,$shortDes,$street,$county,$state)");
+    mysqli_close($con);
+    return 
 }
 ?>
