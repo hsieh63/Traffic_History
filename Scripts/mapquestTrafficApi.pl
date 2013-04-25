@@ -122,13 +122,12 @@ foreach my $number ( sort keys %boundingBox ) {
                             $street = $2 . $3;
                         }
                         else {
-                            $street =
-                                $hashGeo{results}[0]{locations}[0]{street};
+                            $street = $hashGeo{results}[0]{locations}[0]{street};
                         }
                         $street = $hashGeo{results}[0]{locations}[0]{street};
                         $county = $hashGeo{results}[0]{locations}[0]{adminArea4};
-                        $state = $hashGeo{results}[0]{locations}[0]{adminArea5};
-                        if (   $state ne "NJ"|| $state ne "NY"|| $state ne "PA" )
+                        $state = $hashGeo{results}[0]{locations}[0]{adminArea3};
+                        if (   $state eq "NJ"|| $state eq "NY"|| $state eq "PA" )
                         {
                             $stateFlag = 1;
                         }
@@ -179,7 +178,7 @@ foreach my $number ( sort keys %boundingBox ) {
 					#need to add error checking so not inserting bad data
 					#here we should've put all necessary values into variables
 					#put insert into database here
-                    if ( $stateFlag == 0 ) {
+                    if ( $stateFlag == 1 ) {
                     	print FILE "Zipcode: $zipcode\nLatitude: $lat\nLongitude: $long\nSeverity: $severity\nShort descripttion: $shortDes\nStreet: $street\nCounty: $county\nState: $state\n";
                         $sth->execute( $zipcode, $lat, $long, $severity,$shortDes, $street, $county, $state ) or die print FILE "Couldn't execute statement: " . $sth->errstr;
                     }
@@ -196,5 +195,5 @@ foreach my $number ( sort keys %boundingBox ) {
     }
 }
 $dbh->disconnect;
-print FILE "Exiting script" . $dt->hms() . "\n";
+print FILE "Exiting script, Time: " . $dt->hms() . "\n";
 close(FILE);
