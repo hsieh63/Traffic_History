@@ -31,21 +31,41 @@ my $SQLinsert = "INSERT INTO Weather (Zipcode, Weather, Date_Time)" .
 				 "VALUES (?, ?, ?)";
 my $query_handle; 	#Initialize query handle - define later when it is necessary
 
-
+#query to get 1 zip code per county
+my $SQLreceive = "SELECT max(Zipcode) FROM `Zip_Codes` WHERE 1 GROUP BY County";
+#prepare statement
+my $sth = $dbh->prepare($SQLreceive) or die "Couldn't prepare statement: $DBI->errstr; stopped";
+#execute the query
+$sth->execute() or die "Couldn't prepare statement: $DBI->errstr; stopped";
 
 # script will gather data at specific time intervals
 =begin
 while(true){
-	getWeather();
+	loopThroughZips();
 	sleep(60); #sleep for 60 seconds
 }	
 =cut
 
+#Loops through zip codes and accesses the getWeather function
+sub loopThroughZips(){
+	#while there is still a zipcode left in the SQL query
+	while ( my ($Zipcode) = $sth->fetchrow_arrayref() ) {
+		#execute function with parameter from database
+		getWeather($Zipcode);
+	}
+}
 
+#needs a zipcode parameter passed in to function
 sub getWeather(){
 	# opens zip code input file and parses for locations
 	# zip codes in input file missing the first 0s, but website accepts anyway
-	my $zip;
+	
+	#take Zip Code as the first and only parameter
+	my($zip) = $_[0];
+	
+	#comment out old code getting zipcodes from txt file
+	=begin comment
+	
 	if (open(FILE, "zipCodeTestFile.txt")) {
 		
 		open OUTPUT, ">getWeatherOutput.txt";
@@ -66,6 +86,9 @@ sub getWeather(){
 		print "Cannot open file!\n";
 	#	exit 1;
 	}
+	
+	=end comment 
+	=cut
 	
 	sub getInfo() {
 
@@ -165,9 +188,10 @@ sub getWeather(){
 	
 
 #main function
-getWeather();
+loopThroughZips();
 
 
 #Finished querying, close the connection
+$sth->finish();
 $query_handle->finish();
 $dbh->disconnect();
