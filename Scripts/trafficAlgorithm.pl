@@ -547,4 +547,13 @@ foreach my $time ( sort keys %displayPointsHash ) {
 	}
 }
 
+$sth = $dbh->prepare("SELECT * FROM Traffic_Counter");
+$sth2 = $dbh->prepare("UPDATE Traffic_Counter SET Counter = ? WHERE Index = ?");
+
+$sth->execute() or die "Couldn't execute statement: " . $sth->errstr;
+while ( my $rowHash = $sth->fetchrow_hashref() ) {
+	my $Counter = $rowHash->{Counter} + 1;
+	$sth2->execute($Counter,$rowHash->{Index}) or die "Couldn't execute statement: " . $sth2->errstr;;
+}
+
 $dbh->disconnect();
