@@ -109,7 +109,7 @@ foreach my $number ( sort keys %boundingBox ) {
                     my $jsonResponseGeo = JSON->new;    #initilize json object
                     my $responseGeo =$ua->request($reqGeo);            #get response to url?
                     $jsonResponseGeo = $responseGeo->content;
-                    my $hashRefGeo = decode_json $jsonResponseGeo or warn "GEO URL: " . $geoUrl; #decode json using module and gets a hash reference number
+                    my $hashRefGeo = decode_json $jsonResponseGeo or die "GEO URL: " . $geoUrl; #decode json using module and gets a hash reference number
                     my %hashGeo = %$hashRefGeo; #deference hash number to a hash
 
                     if ( $responseGeo->is_success ) {

@@ -26,12 +26,12 @@ my $dbh = DBI->connect( $dataSource, $dbUser, $dbPass )
 #to prepare statements
 #pull data out of traffic incident table(street,long,lat,zipcode)
 #also should only pull out for the previous day or something depending on how the script is run
-#my $sth = $dbh->prepare(
-#"SELECT tm.Zipcode,tm.Date_Time,tm.Latitude,tm.Longitude,tm.Severity,tm.Address,tm.County,w.Weather FROM Traffic_Mapquest as tm, Weather as w,Zip_Codes as zc WHERE DATE(tm.Date_Time) = CURDATE() and w.Zipcode = zc.Zipcode and tm.County = zc.County and DATE(w.Timestamp) = CURDATE() and (ABS((EXTRACT(HOUR FROM tm.DATE_TIME)-EXTRACT(HOUR FROM w.Timestamp))) < 1)"
-#) or die "Couldn't prepare statemenent: " . $dbh->errstr;
 my $sth = $dbh->prepare(
-"SELECT tm.Zipcode,tm.Date_Time,tm.Latitude,tm.Longitude,tm.Severity,tm.Address,tm.County,w.Weather FROM Traffic_Mapquest as tm, Weather as w,Zip_Codes as zc WHERE (DATE(tm.Date_Time) between DATE_SUB(CURDATE(), INTERVAL 1 DAY) and CURDATE()) and (DATE(w.Timestamp) between DATE_SUB(CURDATE(), INTERVAL 1 DAY) and CURDATE()) and w.Zipcode = zc.Zipcode and tm.County = zc.County and (ABS((EXTRACT(HOUR FROM tm.DATE_TIME)-EXTRACT(HOUR FROM w.Timestamp))) < 1)"
+"SELECT tm.Zipcode,tm.Date_Time,tm.Latitude,tm.Longitude,tm.Severity,tm.Address,tm.County,w.Weather FROM Traffic_Mapquest as tm, Weather as w,Zip_Codes as zc WHERE DATE(tm.Date_Time) = CURDATE() and w.Zipcode = zc.Zipcode and tm.County = zc.County and DATE(w.Timestamp) = CURDATE() and (ABS((EXTRACT(HOUR FROM tm.DATE_TIME)-EXTRACT(HOUR FROM w.Timestamp))) < 1)"
 ) or die "Couldn't prepare statemenent: " . $dbh->errstr;
+#my $sth = $dbh->prepare(
+#"SELECT tm.Zipcode,tm.Date_Time,tm.Latitude,tm.Longitude,tm.Severity,tm.Address,tm.County,w.Weather FROM Traffic_Mapquest as tm, Weather as w,Zip_Codes as zc WHERE (DATE(tm.Date_Time) between DATE_SUB(CURDATE(), INTERVAL 1 DAY) and CURDATE()) and (DATE(w.Timestamp) between DATE_SUB(CURDATE(), INTERVAL 1 DAY) and CURDATE()) and w.Zipcode = zc.Zipcode and tm.County = zc.County and (ABS((EXTRACT(HOUR FROM tm.DATE_TIME)-EXTRACT(HOUR FROM w.Timestamp))) < 1)"
+#) or die "Couldn't prepare statemenent: " . $dbh->errstr;
 my $sth2 = $dbh->prepare("SELECT * FROM Traffic_Display")
   or die "Couldn't prepare statemenent: " . $dbh->errstr;
 $sth->execute() or die "Couldn't execute statement: " . $sth->errstr;
@@ -386,7 +386,7 @@ $sth = $dbh->prepare(
 "INSERT INTO Traffic_Display (Zipcode,Latitude,Longitude,Severity,Address,County,Weather,Time_Value) VALUES (?,?,?,?,?,?,?,?)"
 ) or die "Couldn't prepare statemenent: " . $dbh->errstr;
 $sth2 = $dbh->prepare(
-"UPDATE Traffic_Display Zipcode = ?,Latitude = ?,Longitude = ?,Severity = ?,Address = ?,County = ?,Weather = ?,Time_Value = ? WHERE Index = ?"
+"UPDATE Traffic_Display SET Zipcode = ?,Latitude = ?,Longitude = ?,Severity = ?,Address = ?,County = ?,Weather = ?,Time_Value = ? WHERE `Index` = ?"
 ) or die "Couldn't prepare statemenent: " . $dbh->errstr;
 foreach my $weather ( sort keys %displayPointsHash ) {
 	foreach my $time ( sort keys %{ $displayPointsHash{$weather} } ) {
@@ -405,7 +405,7 @@ foreach my $weather ( sort keys %displayPointsHash ) {
 					my @array =
 					  @{ $displayPointsHash{$weather}{$time}{$address}{$long}
 						  {$lat} };
-					if ( $array[3] != 0 ) {
+					if ( $array[3] == 0 ) {
 						$sth->execute( $array[1], $lat, $long, $array[0],
 							$address, $array[2], $weather, $time )
 						  or die "Couldn't execute statement: " . $sth->errstr;
