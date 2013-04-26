@@ -248,20 +248,20 @@ while ( my $rowHash = $sth2->fetchrow_hashref() ) {
 	if ( $hashSize > 0 ) {
 		if (
 			exists $displayPoints->{ $rowHash->{"Weather"} }
-			->{ $rowHash->{"Time"} }->{ $rowHash->{"Address"} }
+			->{ $rowHash->{"Time_Value"} }->{ $rowHash->{"Address"} }
 			->{ $rowHash->{"Longitude"} }->{ $rowHash->{"Latitude"} } )
 		{
 			my $temp =
-			  $displayPoints->{ $rowHash->{"Weather"} }->{ $rowHash->{"Time"} }
+			  $displayPoints->{ $rowHash->{"Weather"} }->{ $rowHash->{"Time_Value"} }
 			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 			  ->{ $rowHash->{"Latitude"} }[0];
 			$temp = $temp + $rowHash->{"Severity"};
-			$displayPoints->{ $rowHash->{"Weather"} }->{ $rowHash->{"Time"} }
+			$displayPoints->{ $rowHash->{"Weather"} }->{ $rowHash->{"Time_Value"} }
 			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 			  ->{ $rowHash->{"Latitude"} }[0] = $temp;
 		}
 		else {
-			$displayPoints->{ $rowHash->{"Weather"} }->{ $rowHash->{"Time"} }
+			$displayPoints->{ $rowHash->{"Weather"} }->{ $rowHash->{"Time_Value"} }
 			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 			  ->{ $rowHash->{"Latitude"} } = [
 				$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
@@ -381,7 +381,7 @@ foreach my $weather ( sort keys %gatheredPointsHash ) {
 #then either add to point in display hash or create new point in display hash
 #then push display hash back into database
 $sth = $dbh->prepare(
-"INSERT INTO Traffic_Display (Index,Zipcode,Latitude,Longitude,Severity,Address,County,Weather,Time) VALUES (?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE Zipcode = ?,Latitude = ?,Longitude = ?,Severity = ?,Address = ?,County = ?,Weather = ?,Time = ?"
+"INSERT INTO Traffic_Display (`Index`,Zipcode,Latitude,Longitude,Severity,Address,County,Weather,Time_Value) VALUES (?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE Zipcode = ?,Latitude = ?,Longitude = ?,Severity = ?,Address = ?,County = ?,Weather = ?,Time_Value = ?"
 ) or die "Couldn't prepare statemenent: " . $dbh->errstr;
 foreach my $weather ( sort keys %displayPointsHash ) {
 	foreach my $time ( sort keys %{ $displayPointsHash{$weather} } ) {
