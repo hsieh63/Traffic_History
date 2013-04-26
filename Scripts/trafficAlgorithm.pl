@@ -63,7 +63,7 @@ while ( my $rowHash = $sth->fetchrow_hashref() ) {
 				  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 				  ->{ $rowHash->{"Latitude"} } = [
 					$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
-					$rowHash->{"County"}
+					$rowHash->{"County"}, 1
 				  ];
 			}
 		}
@@ -87,7 +87,7 @@ while ( my $rowHash = $sth->fetchrow_hashref() ) {
 				  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 				  ->{ $rowHash->{"Latitude"} } = [
 					$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
-					$rowHash->{"County"}
+					$rowHash->{"County"}, 1
 				  ];
 			}
 		}
@@ -111,7 +111,7 @@ while ( my $rowHash = $sth->fetchrow_hashref() ) {
 				  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 				  ->{ $rowHash->{"Latitude"} } = [
 					$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
-					$rowHash->{"County"}
+					$rowHash->{"County"}, 1
 				  ];
 			}
 		}
@@ -135,7 +135,7 @@ while ( my $rowHash = $sth->fetchrow_hashref() ) {
 				  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 				  ->{ $rowHash->{"Latitude"} } = [
 					$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
-					$rowHash->{"County"}
+					$rowHash->{"County"}, 1
 				  ];
 			}
 		}
@@ -159,7 +159,7 @@ while ( my $rowHash = $sth->fetchrow_hashref() ) {
 				  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 				  ->{ $rowHash->{"Latitude"} } = [
 					$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
-					$rowHash->{"County"}
+					$rowHash->{"County"}, 1
 				  ];
 			}
 		}
@@ -183,7 +183,7 @@ while ( my $rowHash = $sth->fetchrow_hashref() ) {
 				  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 				  ->{ $rowHash->{"Latitude"} } = [
 					$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
-					$rowHash->{"County"}
+					$rowHash->{"County"}, 1
 				  ];
 			}
 		}
@@ -207,7 +207,7 @@ while ( my $rowHash = $sth->fetchrow_hashref() ) {
 				  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 				  ->{ $rowHash->{"Latitude"} } = [
 					$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
-					$rowHash->{"County"}
+					$rowHash->{"County"}, 1
 				  ];
 			}
 		}
@@ -231,7 +231,7 @@ while ( my $rowHash = $sth->fetchrow_hashref() ) {
 				  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 				  ->{ $rowHash->{"Latitude"} } = [
 					$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
-					$rowHash->{"County"}
+					$rowHash->{"County"}, 1
 				  ];
 			}
 		}
@@ -265,12 +265,12 @@ while ( my $rowHash = $sth2->fetchrow_hashref() ) {
 			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 			  ->{ $rowHash->{"Latitude"} } = [
 				$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
-				$rowHash->{"County"}
+				$rowHash->{"County"}, $rowHash->{"Index"}
 			  ];
 		}
 	}
 	else {
-		printf("No records");
+		print("No records");
 	}
 }
 
@@ -381,7 +381,7 @@ foreach my $weather ( sort keys %gatheredPointsHash ) {
 #then either add to point in display hash or create new point in display hash
 #then push display hash back into database
 $sth = $dbh->prepare(
-"INSERT INTO Traffic_Display (Zipcode,Latitude,Longitude,Severity,Address,County,Weather,Time) VALUES (?,?,?,?,?,?,?,?)"
+"INSERT INTO Traffic_Display (Index,Zipcode,Latitude,Longitude,Severity,Address,County,Weather,Time) VALUES (?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE Zipcode = ?,Latitude = ?,Longitude = ?,Severity = ?,Address = ?,County = ?,Weather = ?,Time = ?"
 ) or die "Couldn't prepare statemenent: " . $dbh->errstr;
 foreach my $weather ( sort keys %displayPointsHash ) {
 	foreach my $time ( sort keys %{ $displayPointsHash{$weather} } ) {
@@ -400,7 +400,8 @@ foreach my $weather ( sort keys %displayPointsHash ) {
 					my @array =
 					  $displayPointsHash{$weather}{$time}{$address}{$long}
 					  {$lat};
-					$sth->execute( $array[1], $lat, $long, $array[0], $address,
+					$sth->execute( $array[3], $array[1], $lat, $long, $array[0], $address,
+						$array[2], $weather, $time, $array[1], $lat, $long, $array[0], $address,
 						$array[2], $weather, $time )
 					  or die "Couldn't execute statement: " . $sth->errstr;
 				}

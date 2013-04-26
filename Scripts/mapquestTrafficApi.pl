@@ -117,8 +117,11 @@ foreach my $number ( sort keys %boundingBox ) {
 						#print $response->content;
 						#should add if geocode fail add to database with unknown?
 						$street = "Unknown";
-                        if ( $hashGeo{results}[0]{locations}[0]{street} =~ m/^(\d+) (\w+) (\w+)/i )
+                        if ( $hashGeo{results}[0]{locations}[0]{street} =~ m/^(\d+) (\w+) (\w+).+/i )
                         {
+                            $street = $2 . $3;
+                        }
+                        elsif( $hashGeo{results}[0]{locations}[0]{street} =~ m/^(\d+) \w+ (\w+) (\w+).+/i ){
                             $street = $2 . $3;
                         }
                         else {
