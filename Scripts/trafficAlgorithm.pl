@@ -27,10 +27,10 @@ my $dbh = DBI->connect( $dataSource, $dbUser, $dbPass )
 #pull data out of traffic incident table(street,long,lat,zipcode)
 #also should only pull out for the previous day or something depending on how the script is run
 my $sth = $dbh->prepare(
-"SELECT tm.Zipcode,tm.Date_Time,tm.Latitude,tm.Longitude,tm.Severity,tm.Address,tm.County,w.Weather FROM Traffic_Mapquest as tm, Weather as w,Zip_Codes as zc WHERE DATE(Date_Time) = CURDATE() and w.Zipcode = zc.Zipcode and tm.County = zc.County and DATE(Timestamp) = CURDATE()"
+"SELECT tm.Zipcode,tm.Date_Time,tm.Latitude,tm.Longitude,tm.Severity,tm.Address,tm.County,w.Weather FROM Traffic_Mapquest as tm, Weather as w,Zip_Codes as zc WHERE DATE(tm.Date_Time) = CURDATE() and w.Zipcode = zc.Zipcode and tm.County = zc.County and DATE(w.Timestamp) = CURDATE() and (ABS((EXTRACT(HOUR FROM tm.DATE_TIME)-EXTRACT(HOUR FROM w.Timestamp))) < 1)"
 ) or die "Couldn't prepare statemenent: " . $dbh->errstr;
 my $sth2 = $dbh->prepare(
-"SELECT td.Zipcode,td.Date_Time,td.Latitude,td.Longitude,td.Severity,td.Address,tm.County,w.Weather FROM Traffic_Display as td, Weather as w,Zip_Codes as zc WHERE DATE(Date_Time) = CURDATE() and w.Zipcode = zc.Zipcode and td.County = zc.County and DATE(Timestamp) = CURDATE()"
+"SELECT td.Zipcode,td.Date_Time,td.Latitude,td.Longitude,td.Severity,td.Address,td.County,w.Weather FROM Traffic_Display as td, Weather as w,Zip_Codes as zc WHERE DATE(td.Date_Time) = CURDATE() and w.Zipcode = zc.Zipcode and td.County = zc.County and DATE(w.Timestamp) = CURDATE() and (ABS((EXTRACT(HOUR FROM td.DATE_TIME)-EXTRACT(HOUR FROM w.Timestamp))) < 1)"
 ) or die "Couldn't prepare statemenent: " . $dbh->errstr;
 $sth->execute() or die "Couldn't execute statement: " . $sth->errstr;
 my $gatheredPoints = {};
