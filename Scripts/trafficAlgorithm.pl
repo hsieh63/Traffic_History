@@ -398,8 +398,8 @@ foreach my $weather ( sort keys %displayPointsHash ) {
 					%{ $displayPointsHash{$weather}{$time}{$address}{$long} } )
 				{
 					my @array =
-					  $displayPointsHash{$weather}{$time}{$address}{$long}
-					  {$lat};
+					  @{$displayPointsHash{$weather}{$time}{$address}{$long}
+					  {$lat}};
 					$sth->execute( $array[3], $array[1], $lat, $long, $array[0], $address,
 						$array[2], $weather, $time, $array[1], $lat, $long, $array[0], $address,
 						$array[2], $weather, $time )
