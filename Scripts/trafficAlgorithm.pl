@@ -63,7 +63,7 @@ while ( my $rowHash = $sth->fetchrow_hashref() ) {
 				  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 				  ->{ $rowHash->{"Latitude"} } = [
 					$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
-					$rowHash->{"County"}, 1
+					$rowHash->{"County"},   0
 				  ];
 			}
 		}
@@ -87,7 +87,7 @@ while ( my $rowHash = $sth->fetchrow_hashref() ) {
 				  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 				  ->{ $rowHash->{"Latitude"} } = [
 					$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
-					$rowHash->{"County"}, 1
+					$rowHash->{"County"},   0
 				  ];
 			}
 		}
@@ -111,7 +111,7 @@ while ( my $rowHash = $sth->fetchrow_hashref() ) {
 				  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 				  ->{ $rowHash->{"Latitude"} } = [
 					$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
-					$rowHash->{"County"}, 1
+					$rowHash->{"County"},   0
 				  ];
 			}
 		}
@@ -135,7 +135,7 @@ while ( my $rowHash = $sth->fetchrow_hashref() ) {
 				  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 				  ->{ $rowHash->{"Latitude"} } = [
 					$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
-					$rowHash->{"County"}, 1
+					$rowHash->{"County"},   0
 				  ];
 			}
 		}
@@ -159,7 +159,7 @@ while ( my $rowHash = $sth->fetchrow_hashref() ) {
 				  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 				  ->{ $rowHash->{"Latitude"} } = [
 					$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
-					$rowHash->{"County"}, 1
+					$rowHash->{"County"},   0
 				  ];
 			}
 		}
@@ -183,7 +183,7 @@ while ( my $rowHash = $sth->fetchrow_hashref() ) {
 				  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 				  ->{ $rowHash->{"Latitude"} } = [
 					$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
-					$rowHash->{"County"}, 1
+					$rowHash->{"County"},   0
 				  ];
 			}
 		}
@@ -207,7 +207,7 @@ while ( my $rowHash = $sth->fetchrow_hashref() ) {
 				  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 				  ->{ $rowHash->{"Latitude"} } = [
 					$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
-					$rowHash->{"County"}, 1
+					$rowHash->{"County"},   0
 				  ];
 			}
 		}
@@ -231,7 +231,7 @@ while ( my $rowHash = $sth->fetchrow_hashref() ) {
 				  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
 				  ->{ $rowHash->{"Latitude"} } = [
 					$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
-					$rowHash->{"County"}, 1
+					$rowHash->{"County"},   0
 				  ];
 			}
 		}
@@ -252,20 +252,21 @@ while ( my $rowHash = $sth2->fetchrow_hashref() ) {
 			->{ $rowHash->{"Longitude"} }->{ $rowHash->{"Latitude"} } )
 		{
 			my $temp =
-			  $displayPoints->{ $rowHash->{"Weather"} }->{ $rowHash->{"Time_Value"} }
-			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
-			  ->{ $rowHash->{"Latitude"} }[0];
+			  $displayPoints->{ $rowHash->{"Weather"} }
+			  ->{ $rowHash->{"Time_Value"} }->{ $rowHash->{"Address"} }
+			  ->{ $rowHash->{"Longitude"} }->{ $rowHash->{"Latitude"} }[0];
 			$temp = $temp + $rowHash->{"Severity"};
-			$displayPoints->{ $rowHash->{"Weather"} }->{ $rowHash->{"Time_Value"} }
-			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
-			  ->{ $rowHash->{"Latitude"} }[0] = $temp;
+			$displayPoints->{ $rowHash->{"Weather"} }
+			  ->{ $rowHash->{"Time_Value"} }->{ $rowHash->{"Address"} }
+			  ->{ $rowHash->{"Longitude"} }->{ $rowHash->{"Latitude"} }[0] =
+			  $temp;
 		}
 		else {
-			$displayPoints->{ $rowHash->{"Weather"} }->{ $rowHash->{"Time_Value"} }
-			  ->{ $rowHash->{"Address"} }->{ $rowHash->{"Longitude"} }
-			  ->{ $rowHash->{"Latitude"} } = [
+			$displayPoints->{ $rowHash->{"Weather"} }
+			  ->{ $rowHash->{"Time_Value"} }->{ $rowHash->{"Address"} }
+			  ->{ $rowHash->{"Longitude"} }->{ $rowHash->{"Latitude"} } = [
 				$rowHash->{"Severity"}, $rowHash->{"Zipcode"},
-				$rowHash->{"County"}, $rowHash->{"Index"}
+				$rowHash->{"County"},   $rowHash->{"Index"}
 			  ];
 		}
 	}
@@ -276,6 +277,7 @@ while ( my $rowHash = $sth2->fetchrow_hashref() ) {
 
 my %gatheredPointsHash = %$gatheredPoints;
 my %displayPointsHash  = %$displayPoints;
+my %displayPointsHashInsert;
 
 #hash->weather->time->zipcode->street/Address->longitude->latitude = severity
 foreach my $weather ( sort keys %gatheredPointsHash ) {
@@ -363,7 +365,7 @@ foreach my $weather ( sort keys %gatheredPointsHash ) {
 							  {$long}{$lat};
 						}
 						else {
-							$displayRef->{$inputLong}->{$inputLat} =
+							$displayRef->{$inputLong}->{$inputLat}[0] =
 							  $displayRef->{$inputLong}->{$inputLat}[0] +
 							  $gatheredPointsHash{$weather}{$time}{$address}
 							  {$long}{$lat}[0];
@@ -381,7 +383,10 @@ foreach my $weather ( sort keys %gatheredPointsHash ) {
 #then either add to point in display hash or create new point in display hash
 #then push display hash back into database
 $sth = $dbh->prepare(
-"INSERT INTO Traffic_Display (`Index`,Zipcode,Latitude,Longitude,Severity,Address,County,Weather,Time_Value) VALUES (?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE Zipcode = ?,Latitude = ?,Longitude = ?,Severity = ?,Address = ?,County = ?,Weather = ?,Time_Value = ?"
+"INSERT INTO Traffic_Display (Zipcode,Latitude,Longitude,Severity,Address,County,Weather,Time_Value) VALUES (?,?,?,?,?,?,?,?)"
+) or die "Couldn't prepare statemenent: " . $dbh->errstr;
+$sth2 = $dbh->prepare(
+"UPDATE Traffic_Display Zipcode = ?,Latitude = ?,Longitude = ?,Severity = ?,Address = ?,County = ?,Weather = ?,Time_Value = ? WHERE Index = ?"
 ) or die "Couldn't prepare statemenent: " . $dbh->errstr;
 foreach my $weather ( sort keys %displayPointsHash ) {
 	foreach my $time ( sort keys %{ $displayPointsHash{$weather} } ) {
@@ -398,12 +403,21 @@ foreach my $weather ( sort keys %displayPointsHash ) {
 					%{ $displayPointsHash{$weather}{$time}{$address}{$long} } )
 				{
 					my @array =
-					  @{$displayPointsHash{$weather}{$time}{$address}{$long}
-					  {$lat}};
-					$sth->execute( $array[3], $array[1], $lat, $long, $array[0], $address,
-						$array[2], $weather, $time, $array[1], $lat, $long, $array[0], $address,
-						$array[2], $weather, $time )
-					  or die "Couldn't execute statement: " . $sth->errstr;
+					  @{ $displayPointsHash{$weather}{$time}{$address}{$long}
+						  {$lat} };
+					if ( $array[3] != 0 ) {
+						$sth->execute( $array[1], $lat, $long, $array[0],
+							$address, $array[2], $weather, $time )
+						  or die "Couldn't execute statement: " . $sth->errstr;
+					}
+					else {
+						$sth2->execute(
+							$array[1], $lat,     $long,
+							$array[0], $address, $array[2],
+							$weather,  $time,    $array[3]
+						  )
+						  or die "Couldn't execute statement: " . $sth->errstr;
+					}
 				}
 			}
 		}
