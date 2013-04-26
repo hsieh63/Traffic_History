@@ -194,6 +194,18 @@ foreach my $number ( sort keys %boundingBox ) {
         }
     }
 }
+
+
+$sth = $dbh->prepare("SELECT * FROM Traffic_Counter");
+my $sth2 = $dbh->prepare("UPDATE Traffic_Counter SET Counter = ? WHERE Index = ?");
+
+$sth->execute() or die "Couldn't execute statement: " . $sth->errstr;
+while ( my $rowHash = $sth->fetchrow_hashref() ) {
+	my $Counter = $rowHash->{Counter} + 1;
+	$sth2->execute($Counter,$rowHash->{Index}) or die "Couldn't execute statement: " . $sth2->errstr;;
+}
+
+
 $dbh->disconnect;
 print FILE "Exiting script, Time: " . $dt->hms() . "\n";
 close(FILE);
