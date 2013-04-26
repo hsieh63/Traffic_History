@@ -31,7 +31,7 @@ my $SQLinsert = "INSERT INTO Weather (Zipcode, Weather) VALUES (?, ?)";
 #query to get 1 zip code per county
 #my $SQLreceive = "SELECT max(Zipcode) FROM `Zip_Codes` WHERE 1 GROUP BY County";
 my $SQLreceive = "SELECT max(Zipcode) FROM `Zip_Codes` WHERE Zipcode NOT IN 
-				(SELECT Zipcode FROM `Zip_Codes` WHERE Zipcode=19640)
+				(SELECT Zipcode FROM `Zip_Codes` WHERE Zipcode=19640 OR  Zipcode=17091 OR Zipcode=11855)
 				GROUP BY County";
 #prepare statement
 my $sth = $dbh->prepare($SQLreceive) or die "Couldn't prepare statement: $DBI->errstr; stopped";
