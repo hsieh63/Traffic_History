@@ -116,18 +116,17 @@ foreach my $number ( sort keys %boundingBox ) {
 
 						#print $response->content;
 						#should add if geocode fail add to database with unknown?
-						$street = "Unknown";
-                        if ( $hashGeo{results}[0]{locations}[0]{street} =~ m/^(\d+) (\w+) (\w+).+/i )
+                        $street = $hashGeo{results}[0]{locations}[0]{street};
+                        if ( $hashGeo{results}[0]{locations}[0]{street} =~ m/^(\d+) (\w+) (.+)/i )
                         {
-                            $street = $2 . $3;
+                            $street = $2 . " " . $3;
                         }
-                        elsif( $hashGeo{results}[0]{locations}[0]{street} =~ m/^(\d+) \w+ (\w+) (\w+).+/i ){
-                            $street = $2 . $3;
+                        elsif( $hashGeo{results}[0]{locations}[0]{street} =~ m/^(\d+) \w+ (\w+) (.+)/i ){
+                            $street = $2 . " " . $3;
                         }
                         else {
                             $street = $hashGeo{results}[0]{locations}[0]{street};
                         }
-                        $street = $hashGeo{results}[0]{locations}[0]{street};
                         $county = $hashGeo{results}[0]{locations}[0]{adminArea4};
                         $state = $hashGeo{results}[0]{locations}[0]{adminArea3};
                         if (   $state eq "NJ"|| $state eq "NY"|| $state eq "PA" )
@@ -200,7 +199,7 @@ foreach my $number ( sort keys %boundingBox ) {
 
 
 $sth = $dbh->prepare("SELECT * FROM Traffic_Counter");
-my $sth2 = $dbh->prepare("UPDATE Traffic_Counter SET Counter = ? WHERE Index = ?");
+my $sth2 = $dbh->prepare("UPDATE Traffic_Counter SET Counter = ? WHERE `Index` = ?");
 
 $sth->execute() or die "Couldn't execute statement: " . $sth->errstr;
 while ( my $rowHash = $sth->fetchrow_hashref() ) {
