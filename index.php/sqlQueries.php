@@ -54,7 +54,7 @@ function mapTrafficPoints($zipcode, $time, $weather) {
     return $resultArray;
 }
 
-function mobileReport($zipcode, $severity, $street, $county, $state, $shortDes, $lat, $long); {
+function mobileReport($zipcode, $severity, $street, $county, $state, $shortDes, $lat, $long) {
     /*  
      */
     
