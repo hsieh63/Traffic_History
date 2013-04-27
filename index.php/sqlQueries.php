@@ -23,15 +23,24 @@ function mapTrafficPoints($zipcode, $time, $weather) {
     //query select * from table where condition
     //format $time and zipcode(possibly if we dont use actualy zipcode
     $query = "SELECT Date_Time, Traffic_Severity, Longitude, Latitude, Zipcode, Weather
-                FROM Traffic_Incident
+                FROM Traffic_Display
                 WHERE Date_Time=" . $time . " AND Zipcode= " . $zipcode . " AND Weather='" . $weather . "'";
+    $queryTwo = "SELECT * FROM Traffic_Counter";
+    if ($result = $con->query($queryTwo)) {
+        while($row = $result->fetch_row()) {
+            $callCounter = $row[1];
+        }
+    }
     $resultArray = array();
     $resultIndex = 0;
     if ($result = $con->query($query)) {
         //parse return
         while($row = $result->fetch_row()) {
             $lngLat = $row[3] . ',' . $row[2];
-            $colorNumber = round($row[1]/10);
+            $colorNumber = round($row[1]/$callCounter);
+            if ($colorNumber > 5) {
+                $colorNumber = 5;
+            }
             $resultArray[$resultIndex] = array('lngLat'=>$lngLat,'color'=>$colorNumber);
             $resultIndex++;
         }
@@ -51,15 +60,20 @@ function mobileReport($zipcode, $severity, $street, $county, $state, $shortDes, 
     
     //Create connection
     //mysqli_connect(host,username,password,dbname);
+    $success = 0;
     $con = mysqli_connect("localhost","traffich_admin","Admin2013","traffich_main");
 
     if (mysqli_connect_errno($con))
     {
         echo "Failed to connect to MySQL: " . mysqli_connect_error();
+        $success = 1;
     }
     
-    mysqli_query($con,"INSERT INTO Traffic_Mobile (Zipcode,Latitude,Longitude,Severity,Short_descrip,Address,County,State) VALUES ($zipcode,$lat,$long,$severity,$shortDes,$street,$county,$state)");
+    $query = mysqli_query($con,"INSERT INTO Traffic_Mobile (Zipcode,Latitude,Longitude,Severity,Short_descrip,Address,County,State) VALUES ($zipcode,$lat,$long,$severity,$shortDes,$street,$county,$state)");
+    if ($query) {
+        $success = 1;
+    }
     mysqli_close($con);
-    return 
+    return $success;
 }
 ?>

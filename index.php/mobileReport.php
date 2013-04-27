@@ -54,6 +54,12 @@ if($_POST) {
     else {
         //error coding for empty time
     }
-    mobileReport($zipcode, $severity, $street, $county, $state, $shortDes, $lat, $long);
+    $resultSuccess = mobileReport($zipcode, $severity, $street, $county, $state, $shortDes, $lat, $long);
+    if($resultSuccess) {
+        echo 'Good';
+    }
+    else {
+        echo 'Bad';
+    }
 }
 ?>
