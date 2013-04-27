@@ -68,14 +68,23 @@ sub getWeather{
 		if ($description =~ m/^(chance)(\w+)/i){
 			$description = "unknown";
 		}
-		elsif ($description =~ m/^(mostly)(\w+)/i) {
+		if ($description =~ m/^(mostly)(\w+)/i) {
 			$description = $2;
 		}
-		elsif ($description =~ m/^(partly)(\w+)/i) {
+		if ($description =~ m/^(partly)(\w+)/i) {
 			$description = "sunny"
 		}
-		elsif ($description =~ m/clear/i) {
+		if ($description =~ m/clear/i) {
 			$description = "sunny";
+		}
+		if ($description =~ m/hazy/i) {
+			$description = "fog";
+		}
+		if ($description =~ m/(sleet|tstorms)/i) {
+			$description = "rain";
+		}
+		if ($description =~ m/flurries/i) {
+			$description = "snow";
 		}
 		#my $time = $hashNest{"observation_time"};	#Time incident occured
 		#my $converted_time = convertTime($time);	#Converted integer from 0-7 (see subscript convertTime)
