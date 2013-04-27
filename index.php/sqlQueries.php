@@ -22,15 +22,17 @@ function mapTrafficPoints($zipcode, $time, $weather) {
         
     //query select * from table where condition
     //format $time and zipcode(possibly if we dont use actualy zipcode
-    $query = "SELECT Date_Time, Traffic_Severity, Longitude, Latitude, Zipcode, Weather
+    $query = "SELECT Date_Time, Severity, Longitude, Latitude, Zipcode, Weather
                 FROM Traffic_Display
-                WHERE Date_Time=" . $time . " AND Zipcode= " . $zipcode . " AND Weather='" . $weather . "'";
+                WHERE Time_Value = " . $time . " AND Zipcode = '" . $zipcode . "' AND Weather = '" . $weather . "'";
     $queryTwo = "SELECT * FROM Traffic_Counter";
     if ($result = $con->query($queryTwo)) {
         while($row = $result->fetch_row()) {
             $callCounter = $row[1];
         }
+        $result->close();
     }
+    
     $resultArray = array();
     $resultIndex = 0;
     if ($result = $con->query($query)) {
@@ -41,15 +43,18 @@ function mapTrafficPoints($zipcode, $time, $weather) {
             if ($colorNumber > 5) {
                 $colorNumber = 5;
             }
+            if ($colorNumber <= 0) {
+                $colorNumber = 1;
+            }
             $resultArray[$resultIndex] = array('lngLat'=>$lngLat,'color'=>$colorNumber);
             $resultIndex++;
         }
+        $result->close();
     }
     else {
         $resultArray[0] = 1;
-   } 
+    } 
     
-    $result->close();
     mysqli_close($con);
     return $resultArray;
 }
