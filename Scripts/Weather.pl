@@ -65,15 +65,16 @@ sub getWeather{
 		#DATABASE IMPLEMENTATION - the data we need is to be stored in our database
 		#define variables which will be stored in the database
 		my $description = $hashNest{"icon"};		#Description of Incident
-		if ($description =~ m/^(light|heavy)(\w+)/i){
-			print("$1,$2\n");
-		}
-		elsif ($description =~ m/^(mostly|small)(\w+)/i) {
-			print("$1,$2\n");		
-		}
-		elsif ($description =~ m/^(partly|scattered)(\w+)/i) {
-			print("$1,$2\n");		
-		}
+		#if ($description =~ m/^(light|heavy)(\w+)/i){
+		#	$description = $2;
+		#}
+		#elsif ($description =~ m/^(mostly|small)(\w+)/i) {
+		#}
+		#elsif ($description =~ m/^(funnel)(\w+)/i) {
+		#}
+		#elsif ($description =~ m/^(partly|scattered)(\w+)/i) {
+		#	$description = "clear";
+		#}
 		#my $time = $hashNest{"observation_time"};	#Time incident occured
 		#my $converted_time = convertTime($time);	#Converted integer from 0-7 (see subscript convertTime)
 		
