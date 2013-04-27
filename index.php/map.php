@@ -65,9 +65,10 @@ $(document).ready(function() {
         </select>
         <select name="weather" required>
             <option value="-1" selected="selected" disabled>Select weather condition</option>
-            <option value="Sunny">Sunny</option>
-            <option value="Rainy">Rainy</option>
-            <option value="Cloudy">Cloudy</option>
+            <option value="sunny">Sunny</option>
+            <option value="rainy">Rainy</option>
+            <option value="cloudy">Cloudy</option>
+            <option value="clear">Clear</option>
         </select>
         <input type="submit" value="Submit">
         <br>
