@@ -17,6 +17,7 @@
                 </li>
             </ul></div>
         </li>
+		<li><a href="/directions.php" class="parent"><span>Directions</span></a></li>
         <li><a href="/progress.php" class="parent"><span>Project Progress</span></a></li>
         <li class="last"><a href="/groupMember.php"><span>Group Members</span></a></li>
     </ul>
