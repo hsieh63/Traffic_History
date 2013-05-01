@@ -59,6 +59,45 @@ function mapTrafficPoints($zipcode, $time, $weather) {
     return $resultArray;
 }
 
+function getPointsInBox($topLeftLat,$bottomRightLat,$topLeftLong,$bottomRightLong){
+	/*
+	function gets all points in Traffic_Display table that are within the box set by the inputs
+	*/
+
+	//connect to database
+	$con = mysqli_connect("localhost","traffich_admin","Admin2013","traffich_main");
+	if (mysqli_connect_errno($con))
+    {
+        echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    }
+
+	//create query
+	$query = 	"SELECT Latitude, Longitude 
+				FROM `Traffic_Display` 
+				WHERE `Latitude`>" . $topLeftLat . " AND `Latitude`<" . $bottomRightLat . " AND 
+				`Longitude`>" . $bottomRightLong . " AND `Longitude`<" . $topLeftLong;
+
+	//using same syntax as first method			
+	$resultArray = array();
+    $resultIndex = 0;			
+	if ($result = $con->query($query)) {
+        //parse return
+        while($row = $result->fetch_row()) {
+            $lngLat = $row[0] . ',' . $row[1];
+            $resultArray[$resultIndex] = array('lngLat'=>$lngLat);
+            $resultIndex++;
+        }
+        $result->close();
+    }
+    else {
+        $resultArray[0] = array('lngLat'=>"0,0");
+    } 
+
+	mysqli_close($con);
+    return $resultArray;
+}
+
+
 function mobileReport($zipcode, $severity, $street, $county, $state, $shortDes, $lat, $long) {
     /*  
      */
