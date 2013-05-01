@@ -23,6 +23,28 @@ if($_POST) {
         //error coding for empty time
     }
 
+	//set up curl function for use
+	//use instead of file_get_contents($url)
+	function curl($url){
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+            $data = curl_exec($ch);
+			/*
+			if(curl_exec($ch) === false)
+			{
+				echo 'Curl error: ' . curl_error($ch);
+			}
+			else
+			{
+				echo 'Operation completed without any errors <br>';
+			}
+			*/
+			echo curl_error($ch) . "<br>";
+            curl_close($ch);
+            return $data;
+        }
+	
 	//parse inputs to be placed into geocoding URL
 	$mapquestStartURL = "http://www.mapquestapi.com/geocoding/v1/address?key=Fmjtd%7Cluub2q01l9%2C8n%3Do5-9u70gw&inFormat=kvp&outFormat=json&location=";
 	$mapURL1 = "";
@@ -43,6 +65,24 @@ if($_POST) {
 	$data2 = json_decode($json2); //transforms json into array
 	$lat2=$data1->{"results"}->{"locations"}->{"latLng"}->{"lat"};
 	$long2=$data2->{"results"}->{"locations"}->{"latLng"}->{"long"};
+	
+	//$long2=5;
+	
+	$test = curl("abcdefg");
+	//testing data
+	//working:
+	//echo "$sLocation, $destination \n";
+	echo "$mapURL1 <br>";
+	echo "$json1 <br>"; 
+	
+	
+	//not working:
+	//echo "Latitude 1: $lat1 Longitude 1: $long1 \n";
+	//echo "Latitude 2: $lat2 Longitude 2: $long2 \n";
+	
+	
+	
+	
 	
 	//after getting lat and lng for both start and destination, need to get points
 	//sql query of all points inside box formed by those coords
@@ -103,16 +143,7 @@ if($_POST) {
 	//can add things like markers for start and end
 	
 	
-	//set up curl function for use
-	//use instead of file_get_contents($url)
-	function curl($url){
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-            $data = curl_exec($ch);
-            curl_close($ch);
-            return $data;
-        }
+	
 	
 }
 
