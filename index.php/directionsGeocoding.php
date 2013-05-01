@@ -30,17 +30,17 @@ if($_POST) {
 	$mapURL2 = "";
 	$mapURL2 .= $mapquestStartURL . $destination . "&thumbMaps=false&maxResults=1";
 	
-	$json1 = file_get_contents($mapURL1); //get json from input URL
-	//$data1 = json_decode($json1, TRUE); //transforms json into array
+	//$json1 = file_get_contents($mapURL1); //get json from input URL
+	$json1 = curl($mapURL1); //use curl function
 	$data1 = json_decode($json1); //decodes json
-	//understand jsons in php a little better, then get lat and lng from jsons
+	
 	//lng is located in results->locations->latLng->lng in the json
 	$lat1=$data1->{"results"}->{"locations"}->{"latLng"}->{"lat"};
 	$long1=$data1->{"results"}->{"locations"}->{"latLng"}->{"long"};
 	
-	$json2 = file_get_contents($mapURL2); //get json from input URL
+	//$json2 = file_get_contents($mapURL2); //get json from input URL
+	$json2 = curl($mapURL2); //use curl function
 	$data2 = json_decode($json2); //transforms json into array
-	//need to get latLng vals
 	$lat2=$data1->{"results"}->{"locations"}->{"latLng"}->{"lat"};
 	$long2=$data2->{"results"}->{"locations"}->{"latLng"}->{"long"};
 	
@@ -83,9 +83,10 @@ if($_POST) {
 	foreach($pointsArray as $point){
 		$additionalURL .= "&routeControlPoint=" . $point['lngLat'] . ",0.1,2";
 	}
-	directionsURL .= $additionalURL;
+	$directionsURL .= $additionalURL;
 	//get json of output of URL
-	$djson = file_get_contents($directionsURL);
+	//$djson = file_get_contents($directionsURL);
+	$djson = curl($directionsURL);
 	$ddata = json_decode($djson);
 	//get URL of displayed static map
 	//if it isnt easy, can create one through getting sessionID, center of map, and correct zoom
@@ -93,7 +94,7 @@ if($_POST) {
 	$centerLat=($lat1+$lat2)/2;
 	$centerLong=($long1+$long2)/2;
 	$zoom=12; //default to 12 for now (values from 1-18)
-	$sessionID=ddata->{"route"}->{"sessionId"}; //from ddata
+	$sessionID=$ddata->{"route"}->{"sessionId"}; //from ddata
 	
 	$imgURL = "http://www.mapquestapi.com/staticmap/v4/getmap?key=Fmjtd|luub2q01l9,8n=o5-9u70gw&type=map&size=600,600&center=";
 	$imgURL .= $centerLat . ',' . $centerLong; //add center of map
@@ -101,6 +102,17 @@ if($_POST) {
 	$imgURL .= "&session=" . $sessionID; //add sessionID value
 	//can add things like markers for start and end
 	
+	
+	//set up curl function for use
+	//use instead of file_get_contents($url)
+	function curl($url){
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+            $data = curl_exec($ch);
+            curl_close($ch);
+            return $data;
+        }
 	
 }
 
