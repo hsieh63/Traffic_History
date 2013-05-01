@@ -18,7 +18,7 @@ $('#directionsImageData').submit(function() {
         });
         return false;
     });
-}
+});
 </script>
 
  <div align="center">
