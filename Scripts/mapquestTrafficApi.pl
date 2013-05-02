@@ -52,7 +52,7 @@ my $dbUser     = 'traffich_admin';
 my $dbPass     = 'Admin2013';
 
 my $dbh = DBI->connect( $dataSource, $dbUser, $dbPass ) or die print FILE "Counldn't connect to database: " . DBI->errstr;
-my $sth = $dbh->prepare("INSERT INTO Traffic_Mapquest (Zipcode,Latitude,Longitude,Severity,Short_descrip,Address,County,State) VALUES (?,?,?,?,?,?,?,?)") or die print FILE "Couldn't prepare statemenent: " . $dbh->errstr;
+my $sth = $dbh->prepare("INSERT INTO Traffic_Mapquest (Zipcode,Latitude,Longitude,Severity,Short_descrip,Address,County,State,Date_Time) VALUES (?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)") or die print FILE "Couldn't prepare statemenent: " . $dbh->errstr;
 
 #user prepare statement and use the execute later when insertion is needed
 

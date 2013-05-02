@@ -26,9 +26,9 @@ my $dbh = DBI->connect( $dataSource, $dbUser, $dbPass )
 #to prepare statements
 #pull data out of traffic incident table(street,long,lat,zipcode)
 #also should only pull out for the previous day or something depending on how the script is run
-# AND DATE(Date_Time) = CURDATE()")
+
 my $sth =
-  $dbh->prepare("SELECT * FROM `Traffic_Mapquest` WHERE Address LIKE ''") 
+  $dbh->prepare("SELECT * FROM `Traffic_Mapquest` WHERE Address LIKE '' AND DATE(Date_Time) = CURDATE()")
   or die "Couldn't prepare statemenent: " . $dbh->errstr;
 my $sth2 = $dbh->prepare("UPDATE `Traffic_Mapquest` SET Address = ? WHERE `Index` = ?")
   or die "Couldn't prepare statemenent: " . $dbh->errstr;
