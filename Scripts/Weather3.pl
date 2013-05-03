@@ -54,7 +54,7 @@ sub getWeather{
 	my $jsonResponse = JSON->new; #initilize json object
 	my $response = $ua->request($req); #get response to url?
 	$jsonResponse = $response->content; #set content which is a json into json object
-	my $hashRef = decode_json $jsonResponse; #decode json using module and gets a hash reference number
+	my $hashRef = decode_json $jsonResponse or die print "Zipcode: $zipcode, URL: $url"; #decode json using module and gets a hash reference number
 	my %hash = %$hashRef; #deference hash number to a hash
 	
 
