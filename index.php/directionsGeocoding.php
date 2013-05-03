@@ -138,6 +138,12 @@ if($_POST) {
 	$centerLong=($long1+$long2)/2;
 	$zoom=12; //default to 12 for now (values from 1-18)
 	$sessionID=$ddata->{"route"}->{"sessionId"}; //from ddata
+    //echo "<br>$sessionID<br><br>";
+    
+    //use a foreach loop to go through all maneuvers and collect all the narratives
+    $narrative = $ddata->{"route"}->{"legs"}[0]->{"maneuvers"}[0]->{"narrative"};
+    $narrativetwo = $ddata->{"route"}->{"legs"}[0]->{"maneuvers"}[1]->{"narrative"};
+    //echo "<br>n1: $narrative <br>n2: $narrativetwo <br>";
 	
 	$imgURL = "http://www.mapquestapi.com/staticmap/v4/getmap?key=Fmjtd|luub2q01l9,8n=o5-9u70gw&type=map&size=600,600&center=";
 	$imgURL .= $centerLat . ',' . $centerLong; //add center of map
