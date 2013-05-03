@@ -29,7 +29,9 @@ if($_POST) {
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+            curl_setopt($ch, CURLOPT_HTTPGET, TRUE);
             $data = curl_exec($ch);
+            $data = trim($data);
 			/*
 			if(curl_exec($ch) === false)
 			{
@@ -57,23 +59,22 @@ if($_POST) {
 	$data1 = json_decode($json1); //decodes json
 	
 	//lng is located in results->locations->latLng->lng in the json
-	$lat1=$data1->{"results"}->{"locations"}->{"latLng"}->{"lat"};
-	$long1=$data1->{"results"}->{"locations"}->{"latLng"}->{"long"};
+	$lat1=$data1->{"results"}[0]->{"locations"}[0]->{"latLng"}->{"lat"};
+	$long1=$data1->{"results"}[0]->{"locations"}[0]->{"latLng"}->{"lng"};
 	
 	//$json2 = file_get_contents($mapURL2); //get json from input URL
 	$json2 = curl($mapURL2); //use curl function
 	$data2 = json_decode($json2); //transforms json into array
-	$lat2=$data1->{"results"}->{"locations"}->{"latLng"}->{"lat"};
-	$long2=$data2->{"results"}->{"locations"}->{"latLng"}->{"long"};
+	$lat2=$data1->{"results"}[0]->{"locations"}[0]->{"latLng"}->{"lat"};
+	$long2=$data2->{"results"}[0]->{"locations"}[0]->{"latLng"}->{"lng"};
 	
 	//$long2=5;
 	
-	$test = curl("abcdefg");
 	//testing data
 	//working:
 	//echo "$sLocation, $destination \n";
-	echo "$mapURL1 <br>";
-	echo "$json1 <br>"; 
+	//echo "$mapURL1 <br> $mapURL2 <br>";
+	//echo "$json1 <br>$json2<br>Lat: $lat1 <br>Long: $long1<br/>Lat2: $lat2 <br>Long2: $long2<br>"; 
 	
 	
 	//not working:
@@ -126,8 +127,10 @@ if($_POST) {
 	$directionsURL .= $additionalURL;
 	//get json of output of URL
 	//$djson = file_get_contents($directionsURL);
+    
 	$djson = curl($directionsURL);
 	$ddata = json_decode($djson);
+    //echo "<br>URL: $directionsURL<br><br><br>JSON Directions : $djson <br><br>";
 	//get URL of displayed static map
 	//if it isnt easy, can create one through getting sessionID, center of map, and correct zoom
 	
