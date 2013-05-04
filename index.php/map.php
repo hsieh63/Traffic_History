@@ -1,7 +1,23 @@
 ﻿<?php include 'header.php'; ?>
 <script>
-//use javscript validation to check if all inputs filled out
 $(document).ready(function() {
+    $('#mapImageData').validate({
+        rules: {
+            zipcode: {
+                required: true,
+                minlength: 5,
+                maxlength: 5,
+                digits: true
+            },
+            submitHandler: function(form) {
+                form.submit();
+            },
+            invalidHandler: function(event, validator) {
+                return false;
+            },
+            onsubmit: true
+        }
+    });
     $('#zoomIn').hide();
     $('#zoomOut').hide();
     $('#mapImageData').submit(function() {
@@ -51,7 +67,8 @@ $(document).ready(function() {
         Testing
         <br>
         <form id="mapImageData" action="" method="">
-        Zipcode: <input type="number" name="zipcode">
+        Zipcode: <input name="zipcode" id="zipcode">
+        <br/>
         <select name="time" required>
             <option value="-1" selected="selected" disabled>Select a time period</option>
             <option value="0">12am-3am</option>
@@ -63,6 +80,7 @@ $(document).ready(function() {
             <option value="6">6pm-9pm</option>
             <option value="7">9pm-12am</option>
         </select>
+        <br/>
         <select name="weather" required>
             <option value="-1" selected="selected" disabled>Select weather condition</option>
             <option value="sunny">Sunny</option>
@@ -73,7 +91,8 @@ $(document).ready(function() {
             <option value="tstorms">Thunder Storms</option>
             <option value="unknown">Unkown</option>
         </select>
-        <input type="submit" value="Submit">
+        <br/>
+        <input type="submit" value="Submit" id="submitInput">
         <br>
         <button id="zoomIn" type="button" style="display: none;">Zoom In</button>
         <button id="zoomOut" type="button" style="display: none;">Zoom Out</button>
