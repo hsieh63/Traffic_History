@@ -1,4 +1,4 @@
-﻿<div id="menu" align="center">
+﻿﻿<div id="menu" align="center">
     <ul class="menu">
         <li><a href="index.php" class="parent"><span>Home</span></a></li>
         <li><a href="/map.php" class="parent"><span>Map</span></a>
@@ -19,6 +19,7 @@
         </li>
 		<li><a href="/directions.php" class="parent"><span>Directions</span></a></li>
         <li><a href="/progress.php" class="parent"><span>Project Progress</span></a></li>
+        <li><a href="/login.php" class="parent"><span>Login</span></a></li>
         <li class="last"><a href="/groupMember.php"><span>Group Members</span></a></li>
     </ul>
 </div>
