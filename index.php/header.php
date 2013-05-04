@@ -10,7 +10,13 @@
 	<link type="text/css" href="css/main.css" rel="stylesheet" />
 	<script type="text/javascript" src="scripts/jquery-1.9.0.min.js"></script>
 	<script type="text/javascript" src="scripts/menu.js"></script>
+	<script type="text/javascript" src="scripts/jquery-ui-1.10.3.custom/js/jquery-1.9.1.js"></script>
+	<script type="text/javascript" src="scripts/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+	<script type="text/javascript" src="scripts/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script type="text/javascript" src="scripts/menu.js"></script>
     <script src="http://code.jquery.com/jquery-migrate-1.0.0.js"></script>
+    
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdM76kzhZ0uwCyHxZLogbt5Sc9PrF1RpM&sensor=FALSE"></script>
 	<title>Traffic Monitoring History</title>
 </head>
 <body><?php include 'menu.php' ?>

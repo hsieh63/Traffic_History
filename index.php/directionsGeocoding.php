@@ -6,12 +6,14 @@ include 'sqlQueries.php';
 if($_POST) {
     if(isset($_POST['sLocation'])) {
         $sLocation = $_POST['sLocation'];
+        $sLocation = str_replace(' ','',$sLocation);
     }
     else {
         //error coding for empty starting location
     }
     if(isset($_POST['destination'])) {
         $destination = $_POST['destination'];
+        $destination = str_replace(' ','',$destination);
     }
     else {
         //error coding for empty destination

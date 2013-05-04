@@ -20,6 +20,36 @@ $('#directionsImageData').submit(function() {
     });
 });
 </script>
+ <script>
+$(document).ready(function() {
+    $("#startLoc").autocomplete({
+        source: function( request, response ) {
+            $.ajax({
+                type: "GET",
+                url: "https://maps.googleapis.com/maps/api/place/autocomplete/json?types=geocode&sensor=false&key=AIzaSyAdM76kzhZ0uwCyHxZLogbt5Sc9PrF1RpM&components=country:us",
+                data: {
+                    "input":request.term
+                },
+                success: function( data ) {
+                    response( $.map( data.predictions, function( item ) {
+                        return {
+                            label: item.description,
+                            value: item.description
+                        }
+                    }));
+                }
+            });
+        },
+        minLength: 3,
+        open: function() {
+            $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+        },
+        close: function() {
+            $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+        }
+    });
+});
+</script>
 
  <div align="center">
 	Directions Service
@@ -27,8 +57,8 @@ $('#directionsImageData').submit(function() {
 	Testing
 	<br>
 	<form id="directionsImageData" action="" method="">
-	Starting Location: <input type="text" name="sLocation">
-	Destination: <input type="text" name="destination">
+	Starting Location: <input type="text" name="sLocation" id="startLoc">
+	Destination: <input type="text" name="destination" id="endLoc">
 	<select name="time" required>
             <option value="-1" selected="selected" disabled>Estimated Leaving Time:</option>
             <option value="0">12am-3am</option>
