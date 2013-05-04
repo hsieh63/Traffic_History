@@ -20,36 +20,23 @@ $('#directionsImageData').submit(function() {
     });
 });
 </script>
+<!--
  <script>
 $(document).ready(function() {
     $("#startLoc").autocomplete({
         source: function( request, response ) {
-            $.ajax({
-                type: "GET",
-                url: "https://maps.googleapis.com/maps/api/place/autocomplete/json?types=geocode&sensor=false&key=AIzaSyAdM76kzhZ0uwCyHxZLogbt5Sc9PrF1RpM&components=country:us",
-                data: {
-                    "input":request.term
-                },
-                success: function( data ) {
-                    response( $.map( data.predictions, function( item ) {
-                        return {
-                            label: item.description,
-                            value: item.description
-                        }
-                    }));
-                }
-            });
+            var options = {
+              types: ['geocode'],
+              componentRestrictions: {country: 'us'}
+            };
+            autocomplete = new google.maps.places.Autocomplete(request.term, options);
+            alert(autocomplete.getPlace());
         },
-        minLength: 3,
-        open: function() {
-            $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-        },
-        close: function() {
-            $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-        }
-    });
+        minlength: 2
+        });
 });
 </script>
+-->
 
  <div align="center">
 	Directions Service

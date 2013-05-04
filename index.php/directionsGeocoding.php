@@ -61,12 +61,20 @@ if($_POST) {
 	$data1 = json_decode($json1); //decodes json
 	
 	//lng is located in results->locations->latLng->lng in the json
+    if($data1->{"info"}->{"statuscode"} != 0 ) {
+        echo "$mapURL1: Not found<br>";
+        exit;
+    }
 	$lat1=$data1->{"results"}[0]->{"locations"}[0]->{"latLng"}->{"lat"};
 	$long1=$data1->{"results"}[0]->{"locations"}[0]->{"latLng"}->{"lng"};
 	
 	//$json2 = file_get_contents($mapURL2); //get json from input URL
 	$json2 = curl($mapURL2); //use curl function
 	$data2 = json_decode($json2); //transforms json into array
+    if($data2->{"info"}->{"statuscode"} != 0 ) {
+        echo "$mapURL2: Not found<br>";
+        exit;
+    }
 	$lat2=$data1->{"results"}[0]->{"locations"}[0]->{"latLng"}->{"lat"};
 	$long2=$data2->{"results"}[0]->{"locations"}[0]->{"latLng"}->{"lng"};
 	
@@ -132,6 +140,10 @@ if($_POST) {
     
 	$djson = curl($directionsURL);
 	$ddata = json_decode($djson);
+    if($ddata->{"info"}->{"statuscode"} != 0 ) {
+        echo "Route not found<br>";
+        exit;
+    }
     //echo "<br>URL: $directionsURL<br><br><br>JSON Directions : $djson <br><br>";
 	//get URL of displayed static map
 	//if it isnt easy, can create one through getting sessionID, center of map, and correct zoom
