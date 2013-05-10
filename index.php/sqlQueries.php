@@ -95,8 +95,8 @@ function getPointsInBox($topLeftLat,$bottomRightLat,$topLeftLong,$bottomRightLon
             $lngLat = $row[0] . ',' . $row[1];
             //$resultArray[$resultIndex] = $lngLat;
             //$resultIndex++;
-            //array_push($resultArray, $lngLat);
-            array_push($resultArray, "2");
+            array_push($resultArray, $lngLat);
+            //array_push($resultArray, "2");
         }
         $result->close();
     }

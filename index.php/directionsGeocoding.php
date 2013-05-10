@@ -257,7 +257,7 @@ if($_POST) {
 	//input those values into function so that SQL query can be made to get all locations within bounded box
 	$pointsArray = array();
 	$pointsArray = getPointsInBox($topLeftLat,$bottomRightLat,$topLeftLong,$bottomRightLong);
-    echo "<br>test : " . var_dump(getPointsInBox($topLeftLat,$bottomRightLat,$topLeftLong,$bottomRightLong)) . "<br>" . var_dump($pointsArray) ."<br>";
+    //echo "<br>test : " . var_dump(getPointsInBox($topLeftLat,$bottomRightLat,$topLeftLong,$bottomRightLong)) . "<br>" . var_dump($pointsArray) ."<br>";
 	
 	//need to get route from mapquest API
 	//tell it to avoid points found in query
@@ -267,10 +267,10 @@ if($_POST) {
 	//rest of URL in the form of
 	//&routeControlPoint=Lat,Long,0.1,2
 	$additionalURL = "";
-    echo "<br>$topLeftLat,$bottomRightLat,$topLeftLong,$bottomRightLong<br>Point array: " . $pointsArray[0] . ", " . $pointsArray[1] . "<br>";
+    //echo "<br>$topLeftLat,$bottomRightLat,$topLeftLong,$bottomRightLong<br>Point array: " . $pointsArray[0] . ", " . $pointsArray[1] . "<br>";
 	foreach($pointsArray as $point){
 		$additionalURL .= "&routeControlPoint=" . $point['lngLat'] . ",0.1,2";
-        echo "<br>Point: ".$point['lngLat'] . "<br>";
+        //echo "<br>Point: ".$point['lngLat'] . "<br>";
 	}
 	$directionsURL .= $additionalURL;
 	//get json of output of URL
