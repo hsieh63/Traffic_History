@@ -150,23 +150,48 @@ if($_POST) {
 	
 	$centerLat=($lat1+$lat2)/2;
 	$centerLong=($long1+$long2)/2;
-	$zoom=12; //default to 12 for now (values from 1-18)
 	$sessionID=$ddata->{"route"}->{"sessionId"}; //from ddata
     //echo "<br>$sessionID<br><br>";
     
-    //use a foreach loop to go through all maneuvers and collect all the narratives
-    $narrative = $ddata->{"route"}->{"legs"}[0]->{"maneuvers"}[0]->{"narrative"};
-    $narrativetwo = $ddata->{"route"}->{"legs"}[0]->{"maneuvers"}[1]->{"narrative"};
-    //echo "<br>n1: $narrative <br>n2: $narrativetwo <br>";
+	//getting correct zoom value
+	$zoom=0;
+	$distanceZ=1;
+	$distanceZ = $ddata->{"route"}->{"distance"};
+	$distanceZ = $distanceZ*5280; //get total distance into feet
+	if($distanceZ<6770) $zoom=15;
+	else if($distanceZ<13541) $zoom=14;
+	else if($distanceZ<27083) $zoom=13;
+	else if($distanceZ<54167) $zoom=12;
+	else if($distanceZ<108335) $zoom=11;
+	else if($distanceZ>=108335) echo "Results may be inaccurrate, route too large to accurately use all traffic points.<br>";
+	else $zoom=13; //default zoom value
 	
-	$imgURL = "http://www.mapquestapi.com/staticmap/v4/getmap?key=Fmjtd|luub2q01l9,8n=o5-9u70gw&type=map&size=600,600&center=";
-	$imgURL .= $centerLat . ',' . $centerLong; //add center of map
+    //use a foreach loop to go through all maneuvers and collect all the narratives
+	echo "<table border=\"1\"><tr><th>Maneuver</th><th>Distance</th></tr>";
+	$counter=0;
+	foreach($ddata->{"route"}->{"legs"}[0]->{"maneuvers"} as $maneuvers){
+	$narrative = $ddata->{"route"}->{"legs"}[0]->{"maneuvers"}[$counter]->{"narrative"};
+	$distance = $ddata->{"route"}->{"legs"}[0]->{"maneuvers"}[$counter]->{"distance"};
+	echo "<tr><td>" . $narrative . "</td><td>" . $distance . " miles</td></tr>";
+	$counter=$counter+1;
+	}
+	echo "</table>";
+	
+	//output total distance and estimated time
+	$totalTime=$ddata->{"route"}->{"time"};
+	$hours=floor($totalTime/3600);
+	$minutes=floor(($totalTime - ($hours*3600))/60);
+	$seconds=$totalTime%60;
+	$totalDistance = $ddata->{"route"}->{"distance"};
+	echo "<b>Total Distance: </b> " . $totalDistance . " Miles.<BR>";
+	echo "<b>Estimated Time:</b> " . $hours . " Hours, " . $minutes . " Minutes, " . $seconds . " Seconds.<BR>";
+	
+	$imgURL = "http://www.mapquestapi.com/staticmap/v4/getmap?key=Fmjtd|luub2q01l9,8n=o5-9u70gw&type=map&size=600,600";
+	//&pois=purple-A,40.037822,-76.305679,0,0|purple-B,40.039539,-76.305976,0,0|
+	$imgURL .= "&pois=purple-A," . $lat1 . ',' . $long1 . ",0,0|purple-B," . $lat2 . ',' . $long2 . ",0,0|";
+	$imgURL .= "&center=" . $centerLat . ',' . $centerLong; //add center of map
 	$imgURL .= "&zoom=" . $zoom; //add zoom value
 	$imgURL .= "&session=" . $sessionID; //add sessionID value
-	//can add things like markers for start and end
-	
-	
-	
 	
 }
 
