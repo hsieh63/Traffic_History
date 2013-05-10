@@ -1,4 +1,4 @@
-﻿<?php include 'header.php'; ?>
+﻿﻿<?php include 'header.php'; ?>
 <script>
 $(document).ready(function() {
     function GetQueryStringParams(sParam)
@@ -182,5 +182,89 @@ $(document).ready(function() {
         <br>
         <div id="formResult"> </div>
         </form>
+
+<?php /* //if logged in, display recent searches 
+
+	session_start();
+	
+	if ($_SESSION['loggedin'] == TRUE) { 
+	
+		$username = $_SESSION['username'];
+		
+		//Create database connection
+		$con = mysqli_connect("localhost","traffich_admin","Admin2013","traffich_main");
+				
+		//Display error message if connection fails
+		if (mysqli_connect_errno($con))	{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+				
+		$query = "SELECT recentMap
+				  FROM Login 
+				  WHERE Username = '$username'";
+				  
+		//Obtain the result of the query
+		$result = $con->query($query);
+
+		//Get the first (and only) row of the result		
+		$row = $result->fetch_row();
+
+		if($row[0] != NULL) {
+			$recentMap = $row[0];
+			
+			//Turn the string into an array, with delimeter ','
+			$recentArray = explode(',', $recentMap);
+			//Find the size of the array
+			$size = count($recentArray);
+			
+			echo "<h3>Recent Searches</h3>";
+			echo "1.) Zip Code: $recentArray[0] Time Period: $recentArray[1] Weather: $recentArray[2]"; ?>
+				 <form id="mapImageData" action="" method="">
+				 <input type = "hidden" name = "zipcode" id="zipcode" value = <?php echo "$recentArray[0]"; ?>>
+				 <input type = "hidden" name = "time" value = <?php echo "$recentArray[1]"; ?>>
+				 <input type = "hidden" name = "weather" value = <?php echo "$recentArray[2]"; ?>>
+				 <input type = "submit" value="Submit" id="submitInput">
+				 </form> <?php
+			if(isset($recentArray[4])) {
+				echo "2.) Zip Code: $recentArray[3] Time Period: $recentArray[4] Weather: $recentArray[5]"; ?>
+				 <form id="mapImageData" action="" method="">
+				 <input type = "hidden" name = "zipcode" id="zipcode" value = <?php echo "$recentArray[3]"; ?>>
+				 <input type = "hidden" name = "time" value = <?php echo "$recentArray[4]"; ?>>
+				 <input type = "hidden" name = "weather" value = <?php echo "$recentArray[5]"; ?>>
+				 <input type = "submit" value="Submit" id="submitInput">
+				 </form> <?php
+			}
+			if(isset($recentArray[7])) {
+				echo "3.) Zip Code: $recentArray[6] Time Period: $recentArray[7] Weather: $recentArray[8]"; ?>
+				 <form id="mapImageData" action="" method="">
+				 <input type = "hidden" name = "zipcode" id="zipcode" value = <?php echo "$recentArray[6]"; ?>>
+				 <input type = "hidden" name = "time" value = <?php echo "$recentArray[7]"; ?>>
+				 <input type = "hidden" name = "weather" value = <?php echo "$recentArray[8]"; ?>>
+				 <input type = "submit" value="Submit" id="submitInput">
+				 </form> <?php
+			}
+			if(isset($recentArray[10])) {
+				echo "4.) Zip Code: $recentArray[9] Time Period: $recentArray[10] Weather: $recentArray[11]"; ?>
+				 <form id="mapImageData" action="" method="">
+				 <input type = "hidden" name = "zipcode" id="zipcode" value = <?php echo "$recentArray[9]"; ?>>
+				 <input type = "hidden" name = "time" value = <?php echo "$recentArray[10]"; ?>>
+				 <input type = "hidden" name = "weather" value = <?php echo "$recentArray[11]"; ?>>
+				 <input type = "submit" value="Submit" id="submitInput">
+				 </form> <?php
+			}
+			if(isset($recentArray[13])) {
+				echo "5.) Zip Code: $recentArray[12] Time Period: $recentArray[13] Weather: $recentArray[14]"; ?>
+				 <form id="mapImageData" action="" method="">
+				 <input type = "hidden" name = "zipcode" id="zipcode" value = <?php echo "$recentArray[12]"; ?>>
+				 <input type = "hidden" name = "time" value = <?php echo "$recentArray[13]"; ?>>
+				 <input type = "hidden" name = "weather" value = <?php echo "$recentArray[14]"; ?>>
+				 <input type = "submit" value="Submit" id="submitInput">
+				 </form> <?php
+			}
+			
+		}
+
+	} */
+?> 
     </div>
 <?php include 'footer.php'; ?>
