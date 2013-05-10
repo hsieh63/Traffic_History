@@ -210,7 +210,7 @@ if($_POST) {
         echo "$mapURL2: Not found<br>";
         exit;
     }
-	$lat2=$data1->{"results"}[0]->{"locations"}[0]->{"latLng"}->{"lat"};
+	$lat2=$data2->{"results"}[0]->{"locations"}[0]->{"latLng"}->{"lat"};
 	$long2=$data2->{"results"}[0]->{"locations"}[0]->{"latLng"}->{"lng"};
 	
 	//$long2=5;
@@ -298,7 +298,7 @@ if($_POST) {
 	else if($distanceZ<27083) $zoom=13;
 	else if($distanceZ<54167) $zoom=12;
 	else if($distanceZ<108335) $zoom=11;
-	else if($distanceZ>=108335) echo "Results may be inaccurrate, route too large to accurately use all traffic points.<br>";
+	else if($distanceZ>=108335) {$zoom=10; echo "Results may be inaccurrate, route too large to accurately use all traffic points.<br>";}
 	else $zoom=13; //default zoom value
 	
     //use a foreach loop to go through all maneuvers and collect all the narratives
