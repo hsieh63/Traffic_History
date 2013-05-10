@@ -120,29 +120,6 @@ if($_POST) {
 		$needle = $mostRecent;
 		$haystack = $recentArray;
 
-		/*
-		$i_max = count($haystack)-count($needle) + 1;
-		$j_max = count($needle);
-		for($i=0; $i<$i_max; ++$i) {
-			$match = true;
-			for($j=0; $j<$j_max; ++$j) {
-					echo "Needle[$j]: ";
-					echo $needle[$j];
-					echo "<br>Haystack[$i+$j]: ";
-					echo $haystack[$i+$j];
-					echo "<br><br>";
-					
-				if($needle[$j]!=$haystack[$i+$j]) {
-					$match = false;
-					break;
-				}
-			}
-			if($match) {
-				echo "Success!  Correct index is $i<br>";
-				
-			}
-		}	
-		*/
 		
 		$searchExists = consecutive_values($needle, $haystack);		
 		$newRecent = $recentArray;
@@ -152,17 +129,17 @@ if($_POST) {
 		//If the search already exists, move it to the front of the array
 		//Move the three elements to the front
 		if($searchExists >= 0) {
-			echo "That search exists already";
+		//	echo "That search exists already";
 			$newRecent = moveValueByIndex($newRecent, $searchExists+2, 0);
 			$newRecent = moveValueByIndex($newRecent, $searchExists+2, 0);
 			$newRecent = moveValueByIndex($newRecent, $searchExists+2, 0);
 		}
 		else if ($size < 15) { //if the array doesn't contain 5 searches, just add the most recent to the beginning
-			echo "There are less than 15 searches<br>";
+		//	echo "There are less than 15 searches<br>";
 			array_unshift($newRecent, $mostRecent[0], $mostRecent[1], $mostRecent[2]);
 		}
 		else{ //if the array has 5 searches, get rid of the last one (last three elements) and add the new one to the beginning
-			echo "There are 15 searches.  Removing last recent search.";
+		//	echo "There are 15 searches.  Removing last recent search.";
 			array_pop($newRecent);
 			array_pop($newRecent);
 			array_pop($newRecent);
@@ -173,7 +150,7 @@ if($_POST) {
 		//Convert the new array into a string, and change the recentMap string in the database to the new one
 		
 		$newRecentString = implode(",", $newRecent);
-		echo "<br> New string: $newRecentString <br>";
+		//echo "<br> New string: $newRecentString <br>";
 		
 
 		$sql = "UPDATE Login 

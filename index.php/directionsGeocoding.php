@@ -25,6 +25,143 @@ if($_POST) {
         //error coding for empty time
     }
 
+	//IF LOGGED IN, ENTER THEIR NEW SEARCH IN MOST RECENT SEARCHES
+	
+	//function which can move elements of an array
+	function moveValueByIndex( array $array, $from=null, $to=null )
+	{
+		if ( null === $from )
+	{
+		$from = count( $array ) - 1;
+	}
+
+	if ( !isset( $array[$from] ) )
+	{
+		throw new Exception( "Offset $from does not exist" );
+	}
+
+	if ( array_keys( $array ) != range( 0, count( $array ) - 1 ) )
+	{
+		throw new Exception( "Invalid array keys" );
+	}
+
+	$value = $array[$from];
+	unset( $array[$from] );
+	
+	if ( null === $to )
+	{
+		array_push( $array, $value );
+	} else {
+		$tail = array_splice( $array, $to );
+		array_push( $array, $value );
+		$array = array_merge( $array, $tail );
+	}
+
+	return $array;
+	}
+	
+	//function which determines whether an array is located within another array (consecutively)
+	function consecutive_values(array $needle, array $haystack) {
+		$i_max = count($haystack)-count($needle) + 1;
+		$j_max = count($needle);
+		for($i=0; $i<$i_max; ++$i) {
+			$match = true;
+			for($j=0; $j<$j_max; ++$j) {
+				if($needle[$j]!=$haystack[$i+$j]) {
+					$match = false;
+					break;
+				}
+			}
+			if($match) {
+				return $i;
+			}
+		}
+		return -1;
+	}
+
+	session_start();
+	
+	if ($_SESSION['loggedin'] == TRUE) { 
+		
+		$username = $_SESSION['username'];
+		
+		//Create database connection
+		$con = mysqli_connect("localhost","traffich_admin","Admin2013","traffich_main");
+				
+		//Display error message if connection fails
+		if (mysqli_connect_errno($con))	{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+				
+		$query = "SELECT recentDirections
+				  FROM Login 
+				  WHERE Username = '$username'";
+				  
+		//Obtain the result of the query
+		$result = $con->query($query);
+
+		//Get the first (and only) row of the result		
+		$row = $result->fetch_row();
+		
+		//Convert most recent search into an array
+		$mostRecent = array($sLocation, $destination);
+		
+		//Obtain the recent directions searches string
+		$recentString = $row[0];
+		
+		//Turn the string into an array, with delimeter ','
+		$recentArray = explode(':', $recentString);
+		//Find the size of the array
+		$size = count($recentArray);
+		
+		//Check the array for the most recent search
+	
+		$needle = $mostRecent;
+		$haystack = $recentArray;
+		
+		$searchExists = consecutive_values($needle, $haystack);		
+		$newRecent = $recentArray;
+		
+		echo $searchExists;
+		
+		//If the search already exists, move it to the front of the array
+		//Move the two elements to the front
+		if($searchExists >= 0) {
+		//	echo "That search exists already";
+			$newRecent = moveValueByIndex($newRecent, $searchExists+1, 0);
+			$newRecent = moveValueByIndex($newRecent, $searchExists+1, 0);
+		}
+		else if ($size < 10) { //if the array doesn't contain 5 searches, just add the most recent to the beginning
+		//	echo "There are less than 5 searches<br>";
+			array_unshift($newRecent, $mostRecent[0], $mostRecent[1]);
+		}
+		else{ //if the array has 5 searches, get rid of the last one (last three elements) and add the new one to the beginning
+		//	echo "There are 15 searches.  Removing last recent search.";zzz
+			array_pop($newRecent);
+			array_pop($newRecent);
+
+			array_unshift($newRecent, $mostRecent[0], $mostRecent[1]);
+		}
+			
+		//Convert the new array into a string, and change the recentMap string in the database to the new one
+		
+		$newRecentString = implode(":", $newRecent);
+		//echo "<br> New string: $newRecentString <br>";
+		
+
+		$sql = "UPDATE Login 
+				  SET recentDirections = '$newRecentString'
+				  WHERE Username = '$username'";
+
+		$query = mysqli_query($con, $sql);
+		if (!$query) {
+			echo "Query failed<br><br>";
+		}
+	}
+	
+	
+	
+	
 	//set up curl function for use
 	//use instead of file_get_contents($url)
 	function curl($url){

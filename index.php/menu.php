@@ -33,7 +33,7 @@
 				echo "Failed to connect to MySQL: " . mysqli_connect_error();
 			}
 				
-			$query = "SELECT recentMap
+			$query = "SELECT recentMap, recentDirections
 						FROM Login 
 						WHERE Username = '$username'";
 				  
@@ -43,12 +43,14 @@
 			//Get the first (and only) row of the result		
 			$row = $result->fetch_row();
 
-			if($row[0] != NULL) {		
+			if($row[0] != NULL or $row[1] != NULL) {		
 			
-			$recentMap = $row[0];
+			$recentMapString = $row[0];
+			$recentDirectionsString = $row[1];
 			
 			//Turn the string into an array, with delimeter ','
-			$recentArray = explode(',', $recentMap);
+			$recentMap = explode(',', $recentMapString);
+			$recentDirections = explode(':', $recentDirectionsString);
 			
 			?>
 		
@@ -57,15 +59,61 @@
 						<li><a href="#" class="parent"><span>Map</span></a>
 							<div><ul>  
 							
-								<li><a href="/map.php?zipcode=<?php echo "$recentArray[0]";?>?time=<?php echo "$recentArray[1]";?>?weather=<?php echo "$recentArray[2]";?>">
-									<span> <?php echo "Zip Code: $recentArray[0] Time Period: $recentArray[1] Weather: $recentArray[2]"; ?></span></a></li>
-								<li><a href="#"><span>Sub Item 1.2</span></a></li>
+								<li><a href="/map.php?zipcode=<?php echo "$recentMap[0]";?>?time=<?php echo "$recentMap[1]";?>?weather=<?php echo "$recentMap[2]";?>">
+									<span> <?php echo "Zip Code: $recentMap[0] Time Period: $recentMap[1] Weather: $recentMap[2]"; ?></span></a></li> <?php
+								
+								if(isset($recentMap[4])) { ?>
+									<li><a href="/map.php?zipcode=<?php echo "$recentMap[3]";?>?time=<?php echo "$recentMap[4]";?>?weather=<?php echo "$recentMap[5]";?>">
+									<span> <?php echo "Zip Code: $recentMap[3] Time Period: $recentMap[4] Weather: $recentMap[5]"; ?></span></a></li> <?php
+								}
+								if(isset($recentMap[7])) { ?>
+									<li><a href="/map.php?zipcode=<?php echo "$recentMap[6]";?>?time=<?php echo "$recentMap[7]";?>?weather=<?php echo "$recentMap[8]";?>">
+									<span> <?php echo "Zip Code: $recentMap[6] Time Period: $recentMap[7] Weather: $recentMap[8]"; ?></span></a></li> <?php
+								}
+								if(isset($recentMap[10])) { ?>
+									<li><a href="/map.php?zipcode=<?php echo "$recentMap[9]";?>?time=<?php echo "$recentMap[10]";?>?weather=<?php echo "$recentMap[11]";?>">
+									<span> <?php echo "Zip Code: $recentMap[9] Time Period: $recentMap[10] Weather: $recentMap[11]"; ?></span></a></li> <?php
+								}
+								if(isset($recentMap[13])) { ?>
+									<li><a href="/map.php?zipcode=<?php echo "$recentMap[12]";?>?time=<?php echo "$recentMap[13]";?>?weather=<?php echo "$recentMap[14]";?>">
+									<span> <?php echo "Zip Code: $recentMap[12] Time Period: $recentMap[13] Weather: $recentMap[14]"; ?></span></a></li> <?php
+								} ?>
+								
+
+							</ul></div>
+						</li>
+						<li><a href="#" class="parent"><span>Directions</span></a>
+							<div><ul>  
+							
+								<li><a href="/directions.php?sLocation=<?php echo "$recentDirections[0]";?>?destination=<?php echo "$recentDirections[1]";?>">
+									<span> <?php echo "Origin: $recentDirections[0] Destination: $recentDirections[1]"; ?></span></a></li> <?php
+									
+								if(isset($recentDirections[3])) { ?>
+									<li><a href="/directions.php?sLocation=<?php echo "$recentDirections[2]";?>?destination=<?php echo "$recentDirections[3]";?>">
+									<span> <?php echo "Origin: $recentDirections[2] Destination: $recentDirections[3]"; ?></span></a></li> <?php
+								}
+								if(isset($recentDirections[5])) { ?>
+									<li><a href="/directions.php?sLocation=<?php echo "$recentDirections[4]";?>?destination=<?php echo "$recentDirections[5]";?>">
+									<span> <?php echo "Origin: $recentDirections[4] Destination: $recentDirections[5]"; ?></span></a></li> <?php
+								}
+								if(isset($recentDirections[7])) { ?>
+									<li><a href="/directions.php?sLocation=<?php echo "$recentDirections[6]";?>?destination=<?php echo "$recentDirections[7]";?>">
+									<span> <?php echo "Origin: $recentDirections[6] Destination: $recentDirections[7]"; ?></span></a></li> <?php
+								}
+								if(isset($recentDirections[9])) { ?>
+									<li><a href="/directions.php?sLocation=<?php echo "$recentDirections[8]";?>?destination=<?php echo "$recentDirections[9]";?>">
+									<span> <?php echo "Origin: $recentDirections[8] Destination: $recentDirections[9]"; ?></span></a></li> <?php
+								} ?>
+								
+
 							</ul></div>
 						</li>
 					</ul></div>
 				</li>
 		
-			<?php } 
+			<?php 
+			
+			} 
 			
 			?>  <li><a href="/login.php" class="parent"><span>Logout</span></a></li> <?php
 		}
