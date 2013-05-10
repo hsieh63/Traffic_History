@@ -31,6 +31,12 @@ if($_POST) {
 	//function which can move elements of an array
 	function moveValueByIndex( array $array, $from=null, $to=null )
 	{
+	
+	//IF LOGGED IN, ENTER THEIR NEW SEARCH IN MOST RECENT SEARCHES
+	
+	//function which can move elements of an array
+	function moveValueByIndex( array $array, $from=null, $to=null )
+	{
 		if ( null === $from )
 	{
 		$from = count( $array ) - 1;
@@ -164,6 +170,9 @@ if($_POST) {
 	}
 	
 
+	
+	
+	
 	
 	
 	

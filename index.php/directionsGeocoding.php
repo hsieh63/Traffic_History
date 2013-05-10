@@ -159,9 +159,7 @@ if($_POST) {
 		}
 	}
 	
-	
-	
-	
+
 	//set up curl function for use
 	//use instead of file_get_contents($url)
 	function curl($url){
@@ -304,7 +302,7 @@ if($_POST) {
 	else $zoom=13; //default zoom value
 	
     //use a foreach loop to go through all maneuvers and collect all the narratives
-	echo "<table border=\"1\"><tr><th>Maneuver</th><th>Distance</th></tr>";
+	echo "<table border=\"1\" bgcolor=\"#ffffff\"><tr><th>Maneuver</th><th>Distance</th></tr>";
 	$counter=0;
 	foreach($ddata->{"route"}->{"legs"}[0]->{"maneuvers"} as $maneuvers){
 	$narrative = $ddata->{"route"}->{"legs"}[0]->{"maneuvers"}[$counter]->{"narrative"};
@@ -334,4 +332,3 @@ if($_POST) {
 
 ?>
 <img id='mapImg' src= '<?php echo $imgURL ?>' alt='Map Image of Directions'>
-
