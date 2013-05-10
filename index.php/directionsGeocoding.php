@@ -104,7 +104,7 @@ if($_POST) {
 		$row = $result->fetch_row();
 		
 		//Convert most recent search into an array
-		$mostRecent = array($sLocation, $destination);
+		$mostRecent = array($sLocation, $destination, $timeSelected);
 		
 		//Obtain the recent directions searches string
 		$recentString = $row[0];
@@ -122,25 +122,25 @@ if($_POST) {
 		$searchExists = consecutive_values($needle, $haystack);		
 		$newRecent = $recentArray;
 		
-		echo $searchExists;
-		
 		//If the search already exists, move it to the front of the array
 		//Move the two elements to the front
 		if($searchExists >= 0) {
 		//	echo "That search exists already";
-			$newRecent = moveValueByIndex($newRecent, $searchExists+1, 0);
-			$newRecent = moveValueByIndex($newRecent, $searchExists+1, 0);
+			$newRecent = moveValueByIndex($newRecent, $searchExists+2, 0);
+			$newRecent = moveValueByIndex($newRecent, $searchExists+2, 0);
+			$newRecent = moveValueByIndex($newRecent, $searchExists+2, 0);
 		}
-		else if ($size < 10) { //if the array doesn't contain 5 searches, just add the most recent to the beginning
+		else if ($size < 15) { //if the array doesn't contain 5 searches, just add the most recent to the beginning
 		//	echo "There are less than 5 searches<br>";
-			array_unshift($newRecent, $mostRecent[0], $mostRecent[1]);
+			array_unshift($newRecent, $mostRecent[0], $mostRecent[1], $mostRecent[2]);
 		}
 		else{ //if the array has 5 searches, get rid of the last one (last three elements) and add the new one to the beginning
 		//	echo "There are 15 searches.  Removing last recent search.";zzz
 			array_pop($newRecent);
 			array_pop($newRecent);
+			array_pop($newRecent);
 
-			array_unshift($newRecent, $mostRecent[0], $mostRecent[1]);
+			array_unshift($newRecent, $mostRecent[0], $mostRecent[1], $mostRecent[2]);
 		}
 			
 		//Convert the new array into a string, and change the recentMap string in the database to the new one
