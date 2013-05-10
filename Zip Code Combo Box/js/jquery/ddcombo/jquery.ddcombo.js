@@ -436,7 +436,7 @@ $.DDComboBox.main = function(obj, options) {
   var table_id = 'combotable';
   var input_id = table_id + "_input";
   var button_id = table_id + "_button";
-  var title = "Type something...";
+  var title = "Zip Code";
   
   $(obj).createAppend(
     'table', { className: 'ddcombo_table', cellspacing: 0, cellpadding: 0, border: 0, id: table_id }, [
