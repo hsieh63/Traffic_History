@@ -33,6 +33,9 @@ function mapTrafficPoints($zipcode, $time, $weather) {
         $result->close();
     }
     
+	//force call counter to certain value to give better traffic data
+	$callCounter=7;
+	
     $resultArray = array();
     $resultIndex = 0;
     if ($result = $con->query($query)) {
