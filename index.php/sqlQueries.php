@@ -84,9 +84,8 @@ function getPointsInBox($topLeftLat,$bottomRightLat,$topLeftLong,$bottomRightLon
 	//create query
 	$query = 	"SELECT Latitude, Longitude 
 				FROM `Traffic_Display` 
-				WHERE `Latitude`>" . $topLeftLat . " AND `Latitude`<" . $bottomRightLat . " AND 
-				`Longitude`>" . $bottomRightLong . " AND `Longitude`<" . $topLeftLong;
-
+				WHERE `Latitude`<'" . $topLeftLat . "' AND `Latitude`>'" . $bottomRightLat . "' AND 
+				`Longitude`>'" . $bottomRightLong . "' AND `Longitude`<'" . $topLeftLong . "'";
 	//using same syntax as first method			
 	$resultArray = array();
     $resultIndex = 0;			
@@ -94,13 +93,15 @@ function getPointsInBox($topLeftLat,$bottomRightLat,$topLeftLong,$bottomRightLon
         //parse return
         while($row = $result->fetch_row()) {
             $lngLat = $row[0] . ',' . $row[1];
-            $resultArray[$resultIndex] = array('lngLat'=>$lngLat);
-            $resultIndex++;
+            //$resultArray[$resultIndex] = $lngLat;
+            //$resultIndex++;
+            //array_push($resultArray, $lngLat);
+            array_push($resultArray, "2");
         }
         $result->close();
     }
     else {
-        $resultArray[0] = array('lngLat'=>"0,0");
+        array_push($resultArray, "0");
     } 
 
 	mysqli_close($con);

@@ -103,10 +103,6 @@ $(document).ready(function() {
 });
 </script>
     <div align="center">
-        Under construction
-        <br>
-        Testing
-        <br>
         <form id="mapImageData" action="" method="">
         <table>
             <tr>
