@@ -104,7 +104,7 @@ function mobileReport($zipcode, $severity, $street, $county, $state, $shortDes, 
     
     //Create connection
     //mysqli_connect(host,username,password,dbname);
-    $success = 0;
+    $success = 2;
     $con = mysqli_connect("localhost","traffich_admin","Admin2013","traffich_main");
 
     if (mysqli_connect_errno($con))
@@ -113,9 +113,9 @@ function mobileReport($zipcode, $severity, $street, $county, $state, $shortDes, 
         $success = 1;
     }
     
-    $query = mysqli_query($con,"INSERT INTO Traffic_Mobile (Zipcode,Latitude,Longitude,Severity,Short_descrip,Address,County,State) VALUES ($zipcode,$lat,$long,$severity,$shortDes,$street,$county,$state)");
+    $query = mysqli_query($con,"INSERT INTO `Traffic_Mobile` (`Zipcode`,`Latitude`,`Longitude`,`Severity`,`Short_descrip`,`Address`,`County`,`State`) VALUES ('" . $zipcode . "'," . $lat . "," . $long . "," . $severity . ",'" . $shortDes . "','" . $street . "','" . $county . "','" . $state . "')");
     if ($query) {
-        $success = 1;
+        $success = 0;
     }
     mysqli_close($con);
     return $success;

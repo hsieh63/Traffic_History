@@ -1,7 +1,7 @@
 <?php include 'header.php'; ?>
 <script>
 $(document).ready(function() {
-$('#directionsImageData').submit(function() {
+    $('#directionsImageData').submit(function() {
         //alert($('#mapImageData').serialize());
         $.ajax({
             url: "directionsGeocoding.php",
@@ -16,27 +16,25 @@ $('#directionsImageData').submit(function() {
                 //alert('Error');
             }
         });
-        return false;
+    return false;
     });
-});
-</script>
-<!--
- <script>
-$(document).ready(function() {
     $("#startLoc").autocomplete({
         source: function( request, response ) {
             var options = {
-              types: ['geocode'],
-              componentRestrictions: {country: 'us'}
+                types: ['geocode'],
+                componentRestrictions: {country: 'us'}
             };
-            autocomplete = new google.maps.places.Autocomplete(request.term, options);
-            alert(autocomplete.getPlace());
+            var autocomplete = new google.maps.places.Autocomplete(request.term, options);
+            var temp = autocomplete.getPlace();
+            console.log(autocomplete);
+            alert(autocomplete.toSource());
+            alert(temp);
+            response(autocomplete.getPlace());
         },
         minlength: 2
-        });
+    });
 });
 </script>
--->
 
  <div align="center">
 	Directions Service

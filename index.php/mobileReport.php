@@ -55,11 +55,14 @@ if($_POST) {
         //error coding for empty time
     }
     $resultSuccess = mobileReport($zipcode, $severity, $street, $county, $state, $shortDes, $lat, $long);
-    if($resultSuccess) {
-        echo 'Good';
+    if($resultSuccess == 0) {
+        echo 'Good, Zipcode: ' . $zipcode . ',Severity: ' . $severity . ', Street: ' . $street . ',County: ' . $county . ',State: '  . $state . ',Short Des: ' . $shortDes . ',lat: ' . $lat . ',long: ' . $long;
     }
-    else {
-        echo 'Bad';
+    else if($resultSuccess == 1) {
+        echo 'Bad connection.';    
+    }
+    else if($resultSuccess == 2) {
+        echo 'Bad Insert, Zipcode: ' . $zipcode . ',Severity: ' . $severity . ', Street: ' . $street . ',County: ' . $county . ',State: '  . $state . ',Short Des: ' . $shortDes . ',lat: ' . $lat . ',long: ' . $long;
     }
 }
 ?>
