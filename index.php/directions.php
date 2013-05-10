@@ -18,20 +18,24 @@ $(document).ready(function() {
         });
     return false;
     });
-    $("#startLoc").autocomplete({
-        source: function( request, response ) {
-            var options = {
-                types: ['geocode'],
-                componentRestrictions: {country: 'us'}
-            };
-            var autocomplete = new google.maps.places.Autocomplete(request.term, options);
-            var temp = autocomplete.getPlace();
-            console.log(autocomplete);
-            alert(autocomplete.toSource());
-            alert(temp);
-            response(autocomplete.getPlace());
-        },
-        minlength: 2
+    var startBox = (document.getElementById('startLoc'));
+    var options = {
+        types: ['geocode'],
+        componentRestrictions: {country: 'us'}
+    };
+    var startAutocomplete = new google.maps.places.Autocomplete(startBox, options);
+
+    google.maps.event.addListener(startAutocomplete, 'place_changed', function() {
+        var place = startAutocomplete.getPlace();
+        console.log(place.address_components);
+    });
+    
+    var endBox = (document.getElementById('endLoc'));
+    var endAutocomplete = new google.maps.places.Autocomplete(endBox, options);
+
+    google.maps.event.addListener(endAutocomplete, 'place_changed', function() {
+        var place = endAutocomplete.getPlace();
+        console.log(place.address_components);
     });
 });
 </script>
@@ -42,8 +46,8 @@ $(document).ready(function() {
 	Testing
 	<br>
 	<form id="directionsImageData" action="" method="">
-	Starting Location: <input type="text" name="sLocation" id="startLoc">
-	Destination: <input type="text" name="destination" id="endLoc">
+	Starting Location: <input type="text" name="sLocation" id="startLoc" size = "50">
+	Destination: <input type="text" name="destination" id="endLoc" size = "50">
 	<select name="time" required>
             <option value="-1" selected="selected" disabled>Estimated Leaving Time:</option>
             <option value="0">12am-3am</option>
