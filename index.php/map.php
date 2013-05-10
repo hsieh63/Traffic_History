@@ -23,28 +23,21 @@ $(document).ready(function() {
             weather : "Please select a weather condition."
         },
         submitHandler: function(form) {
-            $('#mapImageData').submit(function() {
-                //alert($('#mapImageData').serialize());
-                $.ajax({
-                    url: "mapImaging.php",
-                    type: "POST",
-                    data: $('#mapImageData').serialize(),
-                    success: function(response) {
-                        //$('#zoomIn').show();
-                        //$('#zoomOut').show();
-                        $('#intensityColorTble').show();
-                        $('#mapImageData').find('#formResult').html(response);
-                        //alert('Success');
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        //alert('Error');
-                    }
-                });
-                return false;
+            $.ajax({
+                url: "mapImaging.php",
+                type: "POST",
+                data: $('#mapImageData').serialize(),
+                success: function(response) {
+                    //$('#zoomIn').show();
+                    //$('#zoomOut').show();
+                    $('#intensityColorTble').show();
+                    $('#mapImageData').find('#formResult').html(response);
+                    //alert('Success');
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    //alert('Error');
+                }
             });
-        },
-        errorPlacement: function(error, element) {
-            error.appendTo("#errorzipcode");
         },
         invalidHandler: function(event, validator) {
             return false;
