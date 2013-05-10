@@ -83,24 +83,21 @@ $(document).ready(function() {
         }
     }
     if (GetQueryStringParams('amount') == 3) {
-        $('#mapImageData').submit(function() {
-            $.ajax({
-                    url: "mapImaging.php",
-                    type: "POST",
-                    data: {zipcode : GetQueryStringParams('zipcode'), time : GetQueryStringParams('time'),weather : GetQueryStringParams('weather')},
-                    success: function(response) {
-                        //$('#zoomIn').show();
-                        //$('#zoomOut').show();
-                        $('#intensityColorTble').show();
-                        $('#mapImageData').find('#formResult').html(response);
-                        //alert('Success');
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        //alert('Error');
-                    }
-                });
-            return false;
-        });
+        $.ajax({
+                url: "mapImaging.php",
+                type: "POST",
+                data: {zipcode : GetQueryStringParams('zipcode'), time : GetQueryStringParams('time'),weather : GetQueryStringParams('weather')},
+                success: function(response) {
+                    //$('#zoomIn').show();
+                    //$('#zoomOut').show();
+                    $('#intensityColorTble').show();
+                    $('#mapImageData').find('#formResult').html(response);
+                    //alert('Success');
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    //alert('Error');
+                }
+            });
     }
 
 });
@@ -132,7 +129,9 @@ $(document).ready(function() {
                 <td>
                     <select name="weather">
                         <option value="-1" selected="selected" disabled>Select weather condition</option>
+                        <option value="all">All</option>
                         <option value="sunny">Sunny</option>
+                        <option value="clear">Clear</option>
                         <option value="rain">Rainy</option>
                         <option value="cloudy">Cloudy</option>
                         <option value="sleet">Sleet</option>

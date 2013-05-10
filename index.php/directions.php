@@ -53,6 +53,39 @@ $(document).ready(function() {
     });
 });
 </script>
+<script>
+$(document).ready(function() {
+    function GetQueryStringParams(sParam)
+    {
+        var sPageURL = window.location.search.substring(1);
+        var sURLVariables = sPageURL.split('&');
+        for (var i = 0; i < sURLVariables.length; i++) 
+        {
+            var sParameterName = sURLVariables[i].split('=');
+            if (sParameterName[0] == sParam) 
+            {
+                return sParameterName[1];
+            }
+        }
+    }
+    if (GetQueryStringParams('amount') == 3) {
+        $.ajax({
+            url: "directionsGeocoding.php",
+            type: "POST",
+            data: {sLocation : GetQueryStringParams('sLocation'), destination : GetQueryStringParams('destination'),time : GetQueryStringParams('time')},
+            success: function(response) {
+                //$('#intensityColorTble').show();
+                $('#directionsImageData').find('#formResult').html(response);
+                //alert('Success');
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                //alert('Error');
+            }
+        });
+    }
+
+});
+</script>
 
  <div align="center">
 	Directions Service
