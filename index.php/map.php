@@ -8,7 +8,19 @@ $(document).ready(function() {
                 minlength: 5,
                 maxlength: 5,
                 digits: true
-            }
+            },
+            time : "required",
+            weather : "required"
+        },
+        messages: {
+            zipcode: {
+                required: "Please input a zipcode",
+                minlength: "Zipcode must be 5 digits",
+                maxlength: "Zipcode must be 5 digits",
+                digits: "Zipcode must be digits"
+            },
+            time : "Please select a time",
+            weather : "Please select a weather condition."
         },
         submitHandler: function(form) {
             $('#mapImageData').submit(function() {
@@ -74,7 +86,7 @@ $(document).ready(function() {
                     Zipcode: <input name="zipcode" id="zipcode">
                 </td>
                 <td>
-                    <select name="time" required>
+                    <select name="time">
                         <option value="-1" selected="selected" disabled>Select a time period</option>
                         <option value="0">12am-3am</option>
                         <option value="1">3am-6am</option>
@@ -87,7 +99,7 @@ $(document).ready(function() {
                     </select>
                 </td>
                 <td>
-                    <select name="weather" required>
+                    <select name="weather">
                         <option value="-1" selected="selected" disabled>Select weather condition</option>
                         <option value="sunny">Sunny</option>
                         <option value="rain">Rainy</option>
@@ -104,13 +116,13 @@ $(document).ready(function() {
             </tr>
             <tr>
                 <td>
-                    <label class="error" for="zipcode"></label>
+                    <label class="error" for="zipcode" style="color:#FF0000;"></label>
                 </td>
                 <td>
-                    <label class="error" for="time"></label>
+                    <label class="error" for="time" style="color:#FF0000;"></label>
                 </td>
                 <td>
-                    <label class="error" for="weather"></label>
+                    <label class="error" for="weather" style="color:#FF0000;"></label>
                 </td>
                 <td>
                 </td>
