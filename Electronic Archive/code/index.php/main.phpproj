@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Name>main</Name>
+    <ProjectGuid>f34946c2-1a17-4554-9c6a-1409f1bfa4f4</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>index.php</RootNamespace>
+    <!-- important to be opened by PHP Tools, when also Phalanger Tools are installed -->
+    <ProjectTypeGuids>{A0786B88-2ADB-4C21-ABE8-AA2D79766269}</ProjectTypeGuids>
+    <AssemblyName>index.php</AssemblyName>
+    <IISProjectUrl>http://localhost:36208/</IISProjectUrl>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <IncludeDebugInformation>false</IncludeDebugInformation>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="map.php">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="projectProp.php">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="repOne.php">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="repOnePtTwo.php">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="repTwoPtOne.php">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="footer.php">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="groupMember.php">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="header.php">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="index.php" />
+    <Compile Include="progress.php">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="repOnePtOne.php">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="css" />
+    <Folder Include="images" />
+    <Folder Include="pdf" />
+    <Folder Include="scripts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\main.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="css\menu.css">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="images\arrow.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="images\bg.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="images\hr.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="images\item.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="images\item1.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="images\submenu-bottom.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="images\submenu-bottom.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="images\submenu-top.gif">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="images\submenu-top.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="PDF\Group7_Traffic_Report1_Full_Report.pdf">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="PDF\Group7_Traffic_Report1_Part1.pdf">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="PDF\Group7_Traffic_Report1_Part_2.pdf">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="PDF\Group7_Traffic_Report2_Part1.pdf">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="PDF\Project_Proposal_2_3_13.pdf">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\jquery-1.9.0.min.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\menu.js">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="scripts\pdfobject.js">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+</Project>
