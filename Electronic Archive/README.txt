@@ -18,7 +18,8 @@ allowed inputs:
 
 
 Source code for the website can be compiled under a localhost or under an existing website.
-Clearly, the easiest option is to simply go to our website, shown above.
+Clearly, the easiest option is to simply go to our website, shown above. To host the code, upload
+folder index.php under code to host the entire website.
 
 
 
@@ -43,3 +44,8 @@ The submit mobile report can be found under "Sumbit"
 allowed inputs
 -radio button input choosing value from 1 to 5
 
+For scripts
+
+The scripts are written in perl. They should be run on the same machine as where the database resides.
+The user authentication should be changed if the database has different authentication credentials.
+Otherwise the scripts should be run autonomously.
