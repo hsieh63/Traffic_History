@@ -1,11 +1,6 @@
 ﻿<?php include 'header.php'; ?>
-
-
-
-
-
-
-
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=false&amp;key=AIzaSyAdM76kzhZ0uwCyHxZLogbt5Sc9PrF1RpM" type="text/javascript"></script>
+<script src="http://www.acme.com/javascript/OverlayMessage.js" type="text/javascript"></script>
 <script>
 $(document).ready(function() {
     $('#mapImageData').validate({
@@ -197,14 +192,6 @@ $(document).ready(function() {
     
 <br>
 
-
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-    <title>Google Maps</title>
-    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=false&amp;key=AIzaSyAdM76kzhZ0uwCyHxZLogbt5Sc9PrF1RpM" type="text/javascript"></script>
-    <script src="http://www.acme.com/javascript/OverlayMessage.js" type="text/javascript"></script>
-  </head>
   <body onunload="GUnload()">
     <div id="map" style="width: 550px; height: 450px; margin: 0 auto;"></div>
  
@@ -31224,11 +31211,4 @@ gmarkersF.push(marker);
     //]]>
     </script>
   </body>
-
-</html>
-
-
-
-
-<br>
 <?php include 'footer.php'; ?>
