@@ -1,0 +1,26 @@
+<resources>
+
+    <string name="app_name">Traffic</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">Traffic</string>
+    
+    <string-array name="weatherarray">
+        <item>Sunny</item>
+        <item>Rainy</item>
+        <item>Cloudy</item>
+                     
+</string-array>
+
+    <string-array name="timearray">
+        <item>12AM-3AM</item>
+        <item>3AM-6AM</item>
+        <item>6AM-9AM</item>
+        <item>9AM-12PM</item>    
+        <item>12PM-3PM</item>
+        <item>3PM-6PM</item>
+        <item>6PM-9PM</item>
+        <item>9PM-12AM</item>           
+</string-array>
+
+</resources>
