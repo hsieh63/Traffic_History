@@ -1,0 +1,26 @@
+The website is available for use, so testing can be done at any time.
+
+Here are sample tests that can be run.
+
+Test Case 1 (Map): User will input: 
+Zip Code: 19305
+Weather: Sunny
+Time: 12am-3am
+
+Test Case 2 (Map): User will input: 
+Area: 11566
+Weather: Sunny
+Time: 9pm-12am
+
+Test Case 3 (Directions): User will input: 
+Starting Location: Verona, NJ
+Destination: Montclair, NJ
+Time: 9am-12pm
+
+Test Case 4 (Mobile): User will input: 
+Zip Code: 19305
+Weather: Sunny
+Time: 12am-3am
+
+
+

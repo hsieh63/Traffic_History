@@ -1,0 +1,7 @@
+The android application is integrated with the main website application.
+
+However, in order to test this, you would need a android device.
+
+Once one is obtained, the android code and be compiled and placed onto the device. The application and be run, and it can perform actions equal to that of the first Use Case that the website can perform.
+
+Unfortunately, if you do not have an android device, you will not be able to see the results of the integration between the main application and the mobile. application
