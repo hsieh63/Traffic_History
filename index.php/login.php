@@ -1,3 +1,8 @@
+<?php
+//written by: Matt Araneta
+//tested by: Matt Araneta
+//debugged by: Matt Araneta
+?>
 <?php include 'header.php'; ?>
     <div align="center">
 			

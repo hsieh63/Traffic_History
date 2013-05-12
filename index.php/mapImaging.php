@@ -1,4 +1,9 @@
 ﻿<?php
+//written by: Kevin Hsieh
+//tested by: Kevin Hsieh
+//debugged by: Kevin Hsieh
+?>
+<?php
 /*
     PHP file to construct traffic map image
 */

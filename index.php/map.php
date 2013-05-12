@@ -1,4 +1,9 @@
-﻿<?php include 'header.php'; ?>
+﻿<?php
+//written by: Kevin Hsieh
+//tested by: Kevin Hsieh
+//debugged by: Kevin Hsieh
+?>
+<?php include 'header.php'; ?>
 <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=false&amp;key=AIzaSyAdM76kzhZ0uwCyHxZLogbt5Sc9PrF1RpM" type="text/javascript"></script>
 <script src="http://www.acme.com/javascript/OverlayMessage.js" type="text/javascript"></script>
 <script>

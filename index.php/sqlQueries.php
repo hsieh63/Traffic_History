@@ -1,4 +1,9 @@
 ﻿<?php
+//written by: Kevin Hsieh and John Reed
+//tested by: Kevin Hsieh and John Reed
+//debugged by: Kevin Hsieh and John Reed
+?>
+<?php
 
 function mapTrafficPoints($zipcode, $time, $weather) {
     /*  

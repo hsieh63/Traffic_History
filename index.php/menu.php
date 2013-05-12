@@ -1,4 +1,9 @@
-﻿﻿<div id="menu" align="center">
+﻿﻿<?php
+//written by: Kevin Hsieh and Matt Araneta
+//tested by: Kevin Hsieh and Matt Araneta
+//debugged by: Kevin Hsieh and Matt Araneta
+?>
+<div id="menu" align="center">
     <ul class="menu">
         <li><a href="index.php" class="parent"><span>Home</span></a></li>
         <li><a href="#" class="parent"><span>Services</span></a>

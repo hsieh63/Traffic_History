@@ -1,3 +1,8 @@
+<?php
+//written by: John Reed
+//tested by: John Reed
+//debugged by: Kevin Hsieh and John Reed
+?>
 <?php include 'header.php'; ?>
 <script>
 $(document).ready(function() {

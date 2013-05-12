@@ -1,4 +1,9 @@
 <?php
+//written by: John Reed	
+//tested by: John Reed
+//debugged by: John Reed and Kevin Hsieh
+?>
+<?php
 //php file to geocode entered starting and ending locations
 //get posted info
 include 'sqlQueries.php';
